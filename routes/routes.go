@@ -66,11 +66,11 @@ func InitializeRoutes(router *mux.Router) {
 	r.HandleFunc("/events/society/{societyID}", controllers.RemoveEventsBySocietyID).Methods("DELETE")
 
 	// Student Achievements
-	r.HandleFunc("/achievements", controllers.AddNewStudentAchievement).Methods("POST")
-	r.HandleFunc("/achievements/{enrollmentNo}", controllers.UpdateStudentAchievement).Methods("PUT")
-	r.HandleFunc("/achievements", controllers.FetchAllStudentAchievements).Methods("GET")
-	r.HandleFunc("/achievements/{enrollmentNo}", controllers.RemoveStudentAchievement).Methods("DELETE")
-	r.HandleFunc("/achievements/{enrollmentNo}", controllers.FetchStudentAchievements).Methods("GET")
+	r.HandleFunc("/studentachievements", controllers.AddNewStudentAchievement).Methods("POST")
+	r.HandleFunc("/studentachievements/{enrollmentNo}", controllers.UpdateStudentAchievement).Methods("PUT")
+	r.HandleFunc("/studentachievements", controllers.FetchAllStudentAchievements).Methods("GET")
+	r.HandleFunc("/studentachievements/{enrollmentNo}", controllers.RemoveStudentAchievement).Methods("DELETE")
+	r.HandleFunc("/studentachievements/{enrollmentNo}", controllers.FetchStudentAchievements).Methods("GET")
 
 	// Student Markings
 	r.HandleFunc("/markings", controllers.AddNewMarking).Methods("POST")
@@ -84,4 +84,11 @@ func InitializeRoutes(router *mux.Router) {
 	r.HandleFunc("/testimonials", controllers.FetchAllTestimonials).Methods("GET")
 	r.HandleFunc("/testimonials/{enrollmentNo}", controllers.RemoveTestimonial).Methods("DELETE")
 	r.HandleFunc("/testimonials/{enrollmentNo}", controllers.FetchTestimonialByID).Methods("GET")
+
+	// Coordinator
+	r.HandleFunc("/coordinator", controllers.AddNewCoordinator).Methods("POST")
+	r.HandleFunc("/coordinator/{societyID}", controllers.UpdateCoordinator).Methods("PUT")
+	r.HandleFunc("/coordinator", controllers.FetchAllCoordinators).Methods("GET")
+	r.HandleFunc("/coordinator/{societyID}", controllers.RemoveCoordinator).Methods("DELETE")
+	r.HandleFunc("/coordinator/{societyID}", controllers.FetchCoordinatorByID).Methods("GET")
 }
