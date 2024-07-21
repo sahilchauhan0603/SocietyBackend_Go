@@ -34,12 +34,13 @@ func AddNewRole(w http.ResponseWriter, r *http.Request) {
 }
 
 func FetchAllRoles(w http.ResponseWriter, r *http.Request) {
-	var roles []models.User
-	if result := database.DB.Order("role_id ASC").Find(&roles); result.Error != nil {
+	var roles []models.Role
+	if result := database.DB.Find(&roles); result.Error != nil {
 		http.Error(w, result.Error.Error(), http.StatusInternalServerError)
 		return
 	}
 
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(roles)
 }
@@ -78,6 +79,7 @@ func UpdateRole(w http.ResponseWriter, r *http.Request) {
 	}
 
 	database.DB.Save(&role)
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(role)
 }
