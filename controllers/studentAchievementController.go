@@ -53,6 +53,7 @@ func UpdateStudentAchievement(w http.ResponseWriter, r *http.Request) {
 	}
 
 	database.DB.Save(&achievement)
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(achievement)
 }
