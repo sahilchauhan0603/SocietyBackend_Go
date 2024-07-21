@@ -109,6 +109,7 @@ func DatabaseConnector() {
 		&models.StudentAchievement{},
 		&models.StudentMarking{},
 		&models.Testimonial{},
+		&models.Coordinator{},
 	); err != nil {
 		log.Fatal(err)
 	}

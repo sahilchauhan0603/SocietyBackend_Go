@@ -44,16 +44,16 @@ type SocietyProfile struct {
 	SocietyType        string
 	SocietyName        string
 	SocietyHead        string
-	SocietyCoordinator string
 	DateOfRegistration time.Time
 	SocietyDescription string
+	SocietyCoordinator []Coordinator        `gorm:"foreignKey:SocietyID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	Events             []SocietyEvent       `gorm:"foreignKey:SocietyID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	Achievements       []SocietyAchievement `gorm:"foreignKey:SocietyID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	StudentProfiles    []StudentProfile     `gorm:"foreignKey:SocietyID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 }
 
 type StudentAchievement struct {
-	EnrollmentNo  uint `json:"enrollment_no."`
+	EnrollmentNo  uint
 	AchievementID uint `gorm:"primaryKey;autoIncrement:false"`
 	Title         string
 	Description   string
@@ -85,4 +85,9 @@ type StudentProfile struct {
 type Testimonial struct {
 	EnrollmentNo           uint `gorm:"not null;index"`
 	TestimonialDescription string
+}
+
+type Coordinator struct {
+	SocietyID          uint `gorm:"not null;index"`
+	CoordinatorDetails string
 }
