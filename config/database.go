@@ -98,9 +98,18 @@ func DatabaseConnector() {
 		log.Fatalf("failed to migrate Admin: %v", err)
 	}
 
-	// // Then migrate the related tables
-	// err = DB.AutoMigrate(&models.Work{}, &models.Uploader{})
-	// if err != nil {
-	// 	log.Fatalf("failed to migrate related tables: %v", err)
-	// }
+	// Migrate the schema
+	if err := DB.AutoMigrate(
+		&models.Role{},
+		&models.User{},
+		&models.SocietyProfile{},
+		&models.StudentProfile{},
+		&models.SocietyAchievement{},
+		&models.SocietyEvent{},
+		&models.StudentAchievement{},
+		&models.StudentMarking{},
+		&models.Testimonial{},
+	); err != nil {
+		log.Fatal(err)
+	}
 }
