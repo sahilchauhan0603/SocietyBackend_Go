@@ -35,7 +35,7 @@ func AddNewEvent(w http.ResponseWriter, r *http.Request) {
 func UpdateEvent(w http.ResponseWriter, r *http.Request) {
 
 	params := mux.Vars(r)
-	id, err := strconv.Atoi(params["id"])
+	id, err := strconv.Atoi(params["societyID"])
 	if err != nil {
 		http.Error(w, "Invalid ID", http.StatusBadRequest)
 		return
