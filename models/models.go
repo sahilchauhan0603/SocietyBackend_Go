@@ -3,66 +3,66 @@ package models
 import "time"
 
 type User struct {
-	UserID          int64            `gorm:"primaryKey;autoIncrement"`
-	Username        string           
-	Password        string          
-	Email           string           
+	UserID          int64 `gorm:"primaryKey;autoIncrement"`
+	Username        string
+	Password        string
+	Email           string
 	RoleID          int64            `gorm:"not null;index"`
 	StudentProfiles []StudentProfile `gorm:"foreignKey:UserID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 }
 
 type Role struct {
-	RoleID           int64   `gorm:"primaryKey;autoIncrement"`
-	Rolename         string 
-	LastDateToApply  string 
-	Responsibilities string 
-	LinkBySociety    string 
-	Users             []User `gorm:"foreignKey:RoleID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	RoleID           int64 `gorm:"primaryKey;autoIncrement"`
+	Rolename         string
+	LastDateToApply  string
+	Responsibilities string
+	LinkBySociety    string
+	Users            []User `gorm:"foreignKey:RoleID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 }
 
 type SocietyAchievement struct {
-	SocietyID            uint      `gorm:"not null;index"`
-	SocietyAchievementID uint      `gorm:"not null;index"`
-	Title                string    `json:"title"`
-	Description          string    `json:"description"`
-	DateAchieved         time.Time `json:"date_achieved"`
+	SocietyID            uint `gorm:"not null;index"`
+	SocietyAchievementID uint `gorm:"not null;index"`
+	Title                string
+	Description          string
+	DateAchieved         time.Time
 }
 
 type SocietyEvent struct {
-	SocietyID     uint      `gorm:"not null;index"`
-	EventID       uint      `gorm:"primaryKey;autoIncrement:false"`
-	Title         string    `json:"title"`
-	Description   string    `json:"description"`
-	EventType     string    `json:"event_type"`
-	ModeOfEvent   string    `json:"mode_of_event"`
-	Location      string    `json:"location"`
-	EventDateTime time.Time `json:"event_date_time"`
+	SocietyID     uint `gorm:"not null;index"`
+	EventID       uint `gorm:"primaryKey;autoIncrement:false"`
+	Title         string
+	Description   string
+	EventType     string
+	ModeOfEvent   string
+	Location      string
+	EventDateTime time.Time
 }
 
 type SocietyProfile struct {
-	SocietyID          uint                 `gorm:"primaryKey"`
-	SocietyType        string               `json:"society_type"`
-	SocietyName        string               `json:"society_name"`
-	SocietyHead        string               `json:"society_head"`
-	SocietyCoordinator string               `json:"society_coordinator"`
-	DateOfRegistration time.Time            `json:"date_of_registration"`
-	SocietyDescription string               `json:"society_description"`
+	SocietyID          uint `gorm:"primaryKey"`
+	SocietyType        string
+	SocietyName        string
+	SocietyHead        string
+	SocietyCoordinator string
+	DateOfRegistration time.Time
+	SocietyDescription string
 	Events             []SocietyEvent       `gorm:"foreignKey:SocietyID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	Achievements       []SocietyAchievement `gorm:"foreignKey:SocietyID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	StudentProfiles    []StudentProfile     `gorm:"foreignKey:SocietyID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 }
 
 type StudentAchievement struct {
-	EnrollmentNo  uint      `json:"enrollment_no."`
-	AchievementID uint      `gorm:"primaryKey;autoIncrement:false"`
-	Title         string    `json:"title"`
-	Description   string    `json:"description"`
-	DateAchieved  time.Time `json:"date_achieved"`
+	EnrollmentNo  uint `json:"enrollment_no."`
+	AchievementID uint `gorm:"primaryKey;autoIncrement:false"`
+	Title         string
+	Description   string
+	DateAchieved  time.Time
 }
 
 type StudentMarking struct {
-	EnrollmentNo  uint   `gorm:"primaryKey;autoIncrement:false"`
-	StudentGrades string `json:"student_grades"`
+	EnrollmentNo  uint `gorm:"primaryKey;autoIncrement:false"`
+	StudentGrades string
 }
 
 type StudentProfile struct {
@@ -83,6 +83,6 @@ type StudentProfile struct {
 }
 
 type Testimonial struct {
-	EnrollmentNo           uint   `gorm:"not null;index"`
-	TestimonialDescription string `json:"testimonial_description"`
+	EnrollmentNo           uint `gorm:"not null;index"`
+	TestimonialDescription string
 }
