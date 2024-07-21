@@ -5,7 +5,6 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/sahilchauhan0603/society/controllers"
-	"github.com/sahilchauhan0603/society/middleware"
 )
 
 func InitializeRoutes(router *mux.Router) {
@@ -22,11 +21,19 @@ func InitializeRoutes(router *mux.Router) {
 	router.HandleFunc("/callback", controllers.HandleMicrosoftCallback).Methods("GET")
 
 	// User routes
-	uploaderRouter := router.PathPrefix("/api/v1").Subrouter()
-	uploaderRouter.Use(middleware.JWTVerify)
-	uploaderRouter.HandleFunc("/user", controllers.CreateUser).Methods("POST")
-	uploaderRouter.HandleFunc("/user", controllers.GetUser).Methods("GET")
-	uploaderRouter.HandleFunc("/user/{id}", controllers.GetUserID).Methods("GET")
-	uploaderRouter.HandleFunc("/user/{id}", controllers.UpdateUser).Methods("PUT")
-	uploaderRouter.HandleFunc("/user/{id}", controllers.DeleteUser).Methods("DELETE")
+	userRouter := router.PathPrefix("/api/v1").Subrouter()
+	// uploaderRouter.Use(middleware.JWTVerify)
+	userRouter.HandleFunc("/user", controllers.CreateUser).Methods("POST")
+	userRouter.HandleFunc("/user", controllers.GetUser).Methods("GET")
+	userRouter.HandleFunc("/user/{id}", controllers.GetUserID).Methods("GET")
+	userRouter.HandleFunc("/user/{id}", controllers.UpdateUser).Methods("PUT")
+	userRouter.HandleFunc("/user/{id}", controllers.DeleteUser).Methods("DELETE")
+
+	roleRouter := router.PathPrefix("/api/v1").Subrouter()
+
+	roleRouter.HandleFunc("/roles", controllers.AddNewRole).Methods("POST")
+	roleRouter.HandleFunc("/roles/{id}", controllers.UpdateRole).Methods("PUT")
+	roleRouter.HandleFunc("/roles", controllers.FetchAllRoles).Methods("GET")
+	roleRouter.HandleFunc("/roles/{name}", controllers.FetchRole).Methods("GET")
+	roleRouter.HandleFunc("/roles/{name}", controllers.RemoveRole).Methods("DELETE")
 }
