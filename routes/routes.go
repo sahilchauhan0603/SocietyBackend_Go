@@ -22,7 +22,7 @@ func InitializeRoutes(router *mux.Router) {
 
 	// User routes
 	r := router.PathPrefix("/api/v1").Subrouter()
-	// uploaderRouter.Use(middleware.JWTVerify)
+	// r.Use(middleware.JWTVerify)
 	r.HandleFunc("/user", controllers.CreateUser).Methods("POST")
 	r.HandleFunc("/user", controllers.GetUser).Methods("GET")
 	r.HandleFunc("/user/{id}", controllers.GetUserID).Methods("GET")
@@ -64,4 +64,24 @@ func InitializeRoutes(router *mux.Router) {
 	r.HandleFunc("/events/society/{societyID}", controllers.FetchEventsBySocietyID).Methods("GET")
 	r.HandleFunc("/events/{eventID}", controllers.RemoveEvent).Methods("DELETE")
 	r.HandleFunc("/events/society/{societyID}", controllers.RemoveEventsBySocietyID).Methods("DELETE")
+
+	// Student Achievements
+	r.HandleFunc("/achievements", controllers.AddNewStudentAchievement).Methods("POST")
+	r.HandleFunc("/achievements/{enrollmentNo}", controllers.UpdateStudentAchievement).Methods("PUT")
+	r.HandleFunc("/achievements", controllers.FetchAllStudentAchievements).Methods("GET")
+	r.HandleFunc("/achievements/{enrollmentNo}", controllers.RemoveStudentAchievement).Methods("DELETE")
+	r.HandleFunc("/achievements/{enrollmentNo}", controllers.FetchStudentAchievements).Methods("GET")
+
+	// Student Markings
+	r.HandleFunc("/markings", controllers.AddNewMarking).Methods("POST")
+	r.HandleFunc("/markings/{enrollmentNo}", controllers.UpdateMarking).Methods("PUT")
+	r.HandleFunc("/markings", controllers.FetchAllMarkings).Methods("GET")
+	r.HandleFunc("/markings/{enrollmentNo}", controllers.RemoveMarking).Methods("DELETE")
+
+	// Testimonials
+	r.HandleFunc("/testimonials", controllers.AddNewTestimonial).Methods("POST")
+	r.HandleFunc("/testimonials/{enrollmentNo}", controllers.UpdateTestimonial).Methods("PUT")
+	r.HandleFunc("/testimonials", controllers.FetchAllTestimonials).Methods("GET")
+	r.HandleFunc("/testimonials/{enrollmentNo}", controllers.RemoveTestimonial).Methods("DELETE")
+	r.HandleFunc("/testimonials/{enrollmentNo}", controllers.FetchTestimonialByID).Methods("GET")
 }
