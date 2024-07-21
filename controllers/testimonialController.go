@@ -10,6 +10,21 @@ import (
 	"github.com/sahilchauhan0603/society/models"
 )
 
+type temp struct {
+	EnrollmentNo           uint
+	TestimonialDescription string
+	UserID                 uint
+	FirstName              string
+	LastName               string
+	Branch                 string
+	BatchYear              int
+	MobileNo               string
+	ProfilePicture         string
+	SocietyID              uint
+	SocietyPosition        string
+	StudentContributions   string
+}
+
 func AddNewTestimonial(w http.ResponseWriter, r *http.Request) {
 	var testimonial models.Testimonial
 	if err := json.NewDecoder(r.Body).Decode(&testimonial); err != nil {
@@ -58,27 +73,33 @@ func UpdateTestimonial(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(testimonial)
 }
 func FetchAllTestimonials(w http.ResponseWriter, r *http.Request) {
-	var testimonials []models.Testimonial
-	if err := database.DB.Preload("StudentProfile").Order("enrollment_no ASC").Find(&testimonials).Error; err != nil {
+	var data []temp
+	if err := database.DB.Table("testimonials").
+		Select("testimonials.enrollment_no, testimonials.testimonial_description, student_profiles.first_name, student_profiles.last_name,student_profiles.user_id, student_profiles.branch, student_profiles.batch_year, student_profiles.mobile_no, student_profiles.profile_picture, student_profiles.society_id, student_profiles.society_position, student_profiles.student_contributions").
+		Joins("JOIN student_profiles ON student_profiles.enrollment_no = testimonials.enrollment_no").
+		Scan(&data).Error; err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(testimonials)
+	json.NewEncoder(w).Encode(data)
 }
 func FetchTestimonialByID(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	enrollmentNo := vars["enrollmentNo"]
 
-	var testimonial models.Testimonial
-	if err := database.DB.Preload("StudentProfile").Where("enrollment_no = ?", enrollmentNo).First(&testimonial).Error; err != nil {
-		http.Error(w, err.Error(), http.StatusNotFound)
+	var info temp
+	if err := database.DB.Table("testimonials").
+	Select("testimonials.enrollment_no, testimonials.testimonial_description, student_profiles.first_name, student_profiles.last_name,student_profiles.user_id, student_profiles.branch, student_profiles.batch_year, student_profiles.mobile_no, student_profiles.profile_picture, student_profiles.society_id, student_profiles.society_position, student_profiles.student_contributions").
+	Joins("JOIN student_profiles ON student_profiles.enrollment_no = testimonials.enrollment_no").Where("testimonials.enrollment_no = ?", enrollmentNo).
+		Scan(&info).Error; err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(testimonial)
+	json.NewEncoder(w).Encode(info)
 }
 
 func RemoveTestimonial(w http.ResponseWriter, r *http.Request) {
