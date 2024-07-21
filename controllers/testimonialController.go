@@ -53,6 +53,7 @@ func UpdateTestimonial(w http.ResponseWriter, r *http.Request) {
 	}
 
 	database.DB.Save(&testimonial)
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(testimonial)
 }
