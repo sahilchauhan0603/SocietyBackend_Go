@@ -11,18 +11,14 @@ import (
 )
 
 type temp struct {
-	EnrollmentNo           uint
 	TestimonialDescription string
-	UserID                 uint
 	FirstName              string
 	LastName               string
 	Branch                 string
 	BatchYear              int
-	MobileNo               string
 	ProfilePicture         string
 	SocietyID              uint
 	SocietyPosition        string
-	StudentContributions   string
 }
 
 func AddNewTestimonial(w http.ResponseWriter, r *http.Request) {
@@ -75,7 +71,7 @@ func UpdateTestimonial(w http.ResponseWriter, r *http.Request) {
 func FetchAllTestimonials(w http.ResponseWriter, r *http.Request) {
 	var data []temp
 	if err := database.DB.Table("testimonials").
-		Select("testimonials.enrollment_no, testimonials.testimonial_description, student_profiles.first_name, student_profiles.last_name,student_profiles.user_id, student_profiles.branch, student_profiles.batch_year, student_profiles.mobile_no, student_profiles.profile_picture, student_profiles.society_id, student_profiles.society_position, student_profiles.student_contributions").
+		Select("testimonials.testimonial_description, student_profiles.first_name, student_profiles.last_name, student_profiles.branch, student_profiles.batch_year, student_profiles.profile_picture, student_profiles.society_id, student_profiles.society_position").
 		Joins("JOIN student_profiles ON student_profiles.enrollment_no = testimonials.enrollment_no").
 		Scan(&data).Error; err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -91,7 +87,7 @@ func FetchTestimonialByID(w http.ResponseWriter, r *http.Request) {
 
 	var info temp
 	if err := database.DB.Table("testimonials").
-	Select("testimonials.enrollment_no, testimonials.testimonial_description, student_profiles.first_name, student_profiles.last_name,student_profiles.user_id, student_profiles.branch, student_profiles.batch_year, student_profiles.mobile_no, student_profiles.profile_picture, student_profiles.society_id, student_profiles.society_position, student_profiles.student_contributions").
+	Select("testimonials.testimonial_description, student_profiles.first_name, student_profiles.last_name, student_profiles.branch, student_profiles.batch_year, student_profiles.profile_picture, student_profiles.society_id, student_profiles.society_position").
 	Joins("JOIN student_profiles ON student_profiles.enrollment_no = testimonials.enrollment_no").Where("testimonials.enrollment_no = ?", enrollmentNo).
 		Scan(&info).Error; err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

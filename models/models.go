@@ -50,6 +50,8 @@ type SocietyProfile struct {
 	Events             []SocietyEvent       `gorm:"foreignKey:SocietyID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	Achievements       []SocietyAchievement `gorm:"foreignKey:SocietyID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	StudentProfiles    []StudentProfile     `gorm:"foreignKey:SocietyID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	Galleries          []Gallery            `gorm:"foreignKey:SocietyID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	News               []News               `gorm:"foreignKey:SocietyID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 }
 
 type StudentAchievement struct {
@@ -90,4 +92,17 @@ type Testimonial struct {
 type Coordinator struct {
 	SocietyID          uint `gorm:"not null;index"`
 	CoordinatorDetails string
+}
+
+type Gallery struct {
+	SocietyID uint `gorm:"not null;index"`
+	Image     string
+}
+
+type News struct {
+	SocietyID   uint `gorm:"not null;index"`
+	Title       string
+	Description string
+	DateOfNews  time.Time
+	Author      string
 }

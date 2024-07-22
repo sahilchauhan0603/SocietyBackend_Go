@@ -35,7 +35,6 @@ func InitializeRoutes(router *mux.Router) {
 	r.HandleFunc("/roles/{name}", controllers.FetchRole).Methods("GET")
 	r.HandleFunc("/roles/{name}", controllers.RemoveRole).Methods("DELETE")
 
-
 	r.HandleFunc("/students", controllers.AddNewStudent).Methods("POST")
 	r.HandleFunc("/students/{enrollmentNo}", controllers.UpdateStudent).Methods("PUT")
 	r.HandleFunc("/students", controllers.FetchAllStudents).Methods("GET")
@@ -50,7 +49,6 @@ func InitializeRoutes(router *mux.Router) {
 	r.HandleFunc("/societies/{societyID}", controllers.FetchSocietyByID).Methods("GET")
 	r.HandleFunc("/societies/{societyID}", controllers.RemoveSocietyByID).Methods("DELETE")
 	r.HandleFunc("/societies/coordinator/{societyCoordinator}", controllers.RemoveSocietyByCoordinator).Methods("DELETE")
-
 
 	r.HandleFunc("/achievements", controllers.AddNewAchievement).Methods("POST")
 	r.HandleFunc("/achievements/{societyID}", controllers.UpdateAchievement).Methods("PUT")
@@ -91,4 +89,19 @@ func InitializeRoutes(router *mux.Router) {
 	r.HandleFunc("/coordinator", controllers.FetchAllCoordinators).Methods("GET")
 	r.HandleFunc("/coordinator/{societyID}", controllers.RemoveCoordinator).Methods("DELETE")
 	r.HandleFunc("/coordinator/{societyID}", controllers.FetchCoordinatorByID).Methods("GET")
+
+	//Gallery
+	r.HandleFunc("/galleries", controllers.AddNewGallery).Methods("POST")
+	r.HandleFunc("/galleries", controllers.FetchAllGalleries).Methods("GET")
+	r.HandleFunc("/galleries/{society_id}", controllers.FetchGallery).Methods("GET")
+	r.HandleFunc("/galleries/{id}", controllers.UpdateGallery).Methods("PUT")
+	r.HandleFunc("/galleries/{id}", controllers.RemoveGallery).Methods("DELETE")
+
+	//News
+	r.HandleFunc("/news", controllers.AddNewNews).Methods("POST")
+	r.HandleFunc("/news", controllers.FetchAllNews).Methods("GET")
+	r.HandleFunc("/news/{society_id}", controllers.FetchNews).Methods("GET")
+	r.HandleFunc("/news/{id}", controllers.UpdateNews).Methods("PUT")
+	r.HandleFunc("/news/{id}", controllers.RemoveNews).Methods("DELETE")
+
 }
