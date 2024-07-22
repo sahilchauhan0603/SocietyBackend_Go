@@ -110,6 +110,8 @@ func DatabaseConnector() {
 		&models.StudentMarking{},
 		&models.Testimonial{},
 		&models.Coordinator{},
+		&models.Gallery{},
+		&models.News{},
 	); err != nil {
 		log.Fatal(err)
 	}
