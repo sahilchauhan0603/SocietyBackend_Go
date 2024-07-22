@@ -73,10 +73,15 @@ type StudentProfile struct {
 	Branch               string
 	BatchYear            int
 	MobileNo             string
+	Email                string
 	ProfilePicture       string
 	SocietyID            uint `gorm:"not null;index"`
 	SocietyPosition      string
 	StudentContributions string
+	DomainExpertise      string
+	GithubProfile        *string
+	LinkedInProfile      *string
+	TwitterProfile       *string
 	StudentAchievements  []StudentAchievement `gorm:"foreignKey:EnrollmentNo;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	Testimonials         []Testimonial        `gorm:"foreignKey:EnrollmentNo;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	StudentMarking       StudentMarking       `gorm:"foreignKey:EnrollmentNo;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
