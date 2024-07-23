@@ -11,15 +11,16 @@ import (
 )
 
 func AddNewRole(w http.ResponseWriter, r *http.Request) {
-	var role models.Role
+
+	var role models.SocietyRole
 	if err := json.NewDecoder(r.Body).Decode(&role); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	// Check if table exists or create it if it doesn't
-	if !database.DB.Migrator().HasTable(&models.Role{}) {
-		if err := database.DB.AutoMigrate(&models.Role{}); err != nil {
+	if !database.DB.Migrator().HasTable(&models.SocietyRole{}) {
+		if err := database.DB.AutoMigrate(&models.SocietyRole{}); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -34,7 +35,8 @@ func AddNewRole(w http.ResponseWriter, r *http.Request) {
 }
 
 func FetchAllRoles(w http.ResponseWriter, r *http.Request) {
-	var roles []models.Role
+
+	var roles []models.SocietyRole
 	if result := database.DB.Find(&roles); result.Error != nil {
 		http.Error(w, result.Error.Error(), http.StatusInternalServerError)
 		return
@@ -46,10 +48,11 @@ func FetchAllRoles(w http.ResponseWriter, r *http.Request) {
 }
 
 func FetchRole(w http.ResponseWriter, r *http.Request) {
+
 	vars := mux.Vars(r)
 	rolename := vars["name"]
 
-	var role models.Role
+	var role models.SocietyRole
 	if err := database.DB.Where("rolename = ?", rolename).First(&role).Error; err != nil {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
@@ -67,7 +70,7 @@ func UpdateRole(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var role models.Role
+	var role models.SocietyRole
 	if result := database.DB.First(&role, id); result.Error != nil {
 		http.Error(w, result.Error.Error(), http.StatusNotFound)
 		return
@@ -85,10 +88,11 @@ func UpdateRole(w http.ResponseWriter, r *http.Request) {
 }
 
 func RemoveRole(w http.ResponseWriter, r *http.Request) {
+
 	vars := mux.Vars(r)
 	rolename := vars["name"]
 
-	if err := database.DB.Where("rolename = ?", rolename).Delete(&models.Role{}).Error; err != nil {
+	if err := database.DB.Where("rolename = ?", rolename).Delete(&models.SocietyRole{}).Error; err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

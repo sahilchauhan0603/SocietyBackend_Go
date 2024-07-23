@@ -2,41 +2,24 @@ package models
 
 import "time"
 
-type User struct {
+
+type SocietyRole struct {
+	RoleID           int64 `gorm:"primaryKey;autoIncrement"`
+	Rolename         string
+	LastDateToApply  string
+	Responsibilities string
+	LinkBySociety    string
+	Users            []SocietyUser `gorm:"foreignKey:RoleID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+}
+
+
+type SocietyUser struct {
 	UserID          int64 `gorm:"primaryKey;autoIncrement"`
 	Username        string
 	Password        string
 	Email           string
 	RoleID          int64            `gorm:"not null;index"`
 	StudentProfiles []StudentProfile `gorm:"foreignKey:UserID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
-}
-
-type Role struct {
-	RoleID           int64 `gorm:"primaryKey;autoIncrement"`
-	Rolename         string
-	LastDateToApply  string
-	Responsibilities string
-	LinkBySociety    string
-	Users            []User `gorm:"foreignKey:RoleID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
-}
-
-type SocietyAchievement struct {
-	SocietyID            uint `gorm:"not null;index"`
-	SocietyAchievementID uint `gorm:"not null;index"`
-	Title                string
-	Description          string
-	DateAchieved         time.Time
-}
-
-type SocietyEvent struct {
-	SocietyID     uint `gorm:"not null;index"`
-	EventID       uint `gorm:"primaryKey;autoIncrement:false"`
-	Title         string
-	Description   string
-	EventType     string
-	ModeOfEvent   string
-	Location      string
-	EventDateTime time.Time
 }
 
 type SocietyProfile struct {
@@ -54,18 +37,6 @@ type SocietyProfile struct {
 	News               []News               `gorm:"foreignKey:SocietyID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 }
 
-type StudentAchievement struct {
-	EnrollmentNo  uint
-	AchievementID uint `gorm:"primaryKey;autoIncrement:false"`
-	Title         string
-	Description   string
-	DateAchieved  time.Time
-}
-
-type StudentMarking struct {
-	EnrollmentNo  uint `gorm:"primaryKey;autoIncrement:false"`
-	StudentGrades string
-}
 
 type StudentProfile struct {
 	EnrollmentNo         uint `gorm:"primaryKey"`
@@ -89,23 +60,58 @@ type StudentProfile struct {
 	StudentMarking       StudentMarking       `gorm:"foreignKey:EnrollmentNo;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 }
 
+type SocietyAchievement struct {
+	SocietyID            uint `gorm:"not null;index"`
+	SocietyAchievementID uint `gorm:"not null;index"`
+	Title                string
+	Description          string
+	DateAchieved         time.Time
+}
+
+type SocietyEvent struct {
+	SocietyID     uint `gorm:"not null;index"`
+	EventID       uint `gorm:"primaryKey;autoIncrement:false"`
+	Title         string
+	Description   string
+	EventType     string
+	ModeOfEvent   string
+	Location      string
+	EventDateTime time.Time
+}
+
+
+type StudentAchievement struct {
+	EnrollmentNo  uint
+	AchievementID uint `gorm:"primaryKey;autoIncrement:false"`
+	Title         string
+	Description   string
+	DateAchieved  time.Time
+}
+
+type StudentMarking struct {
+	EnrollmentNo  uint `gorm:"primaryKey;autoIncrement:false"`
+	StudentGrades string
+}
+
+
+
 type Testimonial struct {
-	EnrollmentNo           uint `gorm:"not null;index"`
+	EnrollmentNo           uint `gorm:"index"`
 	TestimonialDescription string
 }
 
 type Coordinator struct {
-	SocietyID          uint `gorm:"not null;index"`
+	SocietyID          uint `gorm:"index"`
 	CoordinatorDetails string
 }
 
 type Gallery struct {
-	SocietyID uint `gorm:"not null;index"`
+	SocietyID uint `gorm:"index"`
 	Image     string
 }
 
 type News struct {
-	SocietyID   uint `gorm:"not null;index"`
+	SocietyID   uint `gorm:"index"`
 	Title       string
 	Description string
 	DateOfNews  time.Time

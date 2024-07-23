@@ -13,15 +13,15 @@ import (
 
 func CreateUser(w http.ResponseWriter, r *http.Request) {
 
-	var user models.User
+	var user models.SocietyUser
 	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	// Check if table exists or create it if it doesn't
-	if !database.DB.Migrator().HasTable(&models.User{}) {
-		if err := database.DB.AutoMigrate(&models.User{}); err != nil {
+	if !database.DB.Migrator().HasTable(&models.SocietyUser{}) {
+		if err := database.DB.AutoMigrate(&models.SocietyUser{}); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -37,7 +37,8 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetUser(w http.ResponseWriter, r *http.Request) {
-	var admin []models.User
+
+	var admin []models.SocietyUser
 	if result := database.DB.Find(&admin); result.Error != nil {
 		http.Error(w, result.Error.Error(), http.StatusInternalServerError)
 		return
@@ -56,7 +57,7 @@ func GetUserID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var user models.User
+	var user models.SocietyUser
 	if result := database.DB.First(&user, id); result.Error != nil {
 		http.Error(w, result.Error.Error(), http.StatusNotFound)
 		return
@@ -75,7 +76,7 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var user models.User
+	var user models.SocietyUser
 	if result := database.DB.First(&user, id); result.Error != nil {
 		http.Error(w, result.Error.Error(), http.StatusNotFound)
 		return
@@ -100,7 +101,7 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if result := database.DB.Delete(&models.User{}, id); result.Error != nil {
+	if result := database.DB.Delete(&models.SocietyUser{}, id); result.Error != nil {
 		http.Error(w, result.Error.Error(), http.StatusInternalServerError)
 		return
 	}
