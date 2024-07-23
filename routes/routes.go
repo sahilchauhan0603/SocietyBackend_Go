@@ -5,7 +5,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/sahilchauhan0603/society/controllers"
-	"github.com/sahilchauhan0603/society/middleware"
+	// "github.com/sahilchauhan0603/society/middleware"
 )
 
 func InitializeRoutes(router *mux.Router) {
@@ -23,7 +23,7 @@ func InitializeRoutes(router *mux.Router) {
 
 	// User routes
 	r := router.PathPrefix("/api/v1").Subrouter()
-	r.Use(middleware.JWTVerify)
+	// r.Use(middleware.JWTVerify)
 	
 	r.HandleFunc("/user", controllers.CreateUser).Methods("POST")
 	r.HandleFunc("/user", controllers.GetUser).Methods("GET")
