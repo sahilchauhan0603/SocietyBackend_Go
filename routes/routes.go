@@ -48,9 +48,12 @@ func InitializeRoutes(router *mux.Router) {
 	r.HandleFunc("/societies/{societyID}", controllers.UpdateSociety).Methods("PUT")
 	r.HandleFunc("/societies", controllers.FetchAllSocieties).Methods("GET")
 	r.HandleFunc("/societies/coordinator/{societyCoordinator}", controllers.FetchSocietyByCoordinator).Methods("GET")
-	r.HandleFunc("/societies/{societyID}", controllers.FetchSocietyByID).Methods("GET")
+	// r.HandleFunc("/societies/{societyID}", controllers.FetchSocietyByID).Methods("GET")
 	r.HandleFunc("/societies/{societyID}", controllers.RemoveSocietyByID).Methods("DELETE")
 	r.HandleFunc("/societies/coordinator/{societyCoordinator}", controllers.RemoveSocietyByCoordinator).Methods("DELETE")
+	//test
+	r.HandleFunc("/societies/{societyID}", controllers.FetchSocietyByID).Methods("GET")
+
 
 	r.HandleFunc("/achievements", controllers.AddNewAchievement).Methods("POST")
 	r.HandleFunc("/achievements/{societyID}", controllers.UpdateAchievement).Methods("PUT")
@@ -105,8 +108,5 @@ func InitializeRoutes(router *mux.Router) {
 	r.HandleFunc("/news/{society_id}", controllers.FetchNews).Methods("GET")
 	r.HandleFunc("/news/{societyID}", controllers.UpdateNews).Methods("PUT")
 	r.HandleFunc("/news/{societyID}", controllers.RemoveNews).Methods("DELETE")
-
-	//test
-	r.HandleFunc("/test/{societyID}", controllers.GetAllDetails).Methods("GET")
 
 }

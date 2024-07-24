@@ -58,14 +58,24 @@ func UpdateSociety(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(society)
 }
 func FetchAllSocieties(w http.ResponseWriter, r *http.Request) {
-	var societies []models.SocietyProfile
-	if err := database.DB.Order("society_id ASC").Find(&societies).Error; err != nil {
+
+	var societies []struct {
+		SocietyType        string
+		SocietyName        string
+		SocietyDescription string
+		SImage             string
+	}
+
+	if err := database.DB.Model(&models.SocietyProfile{}).
+		Select("society_type, society_name, society_description, s_image").
+		Order("society_id ASC").
+		Find(&societies).Error; err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(societies)
+    json.NewEncoder(w).Encode(societies)
 }
 func FetchSocietyByCoordinator(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
@@ -80,23 +90,24 @@ func FetchSocietyByCoordinator(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(society)
 }
-func FetchSocietyByID(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	societyID, err := strconv.Atoi(vars["societyID"])
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
 
-	var society models.SocietyProfile
-	if err := database.DB.Where("society_id = ?", societyID).First(&society).Error; err != nil {
-		http.Error(w, err.Error(), http.StatusNotFound)
-		return
-	}
+// func FetchSocietyByID(w http.ResponseWriter, r *http.Request) {
+// 	vars := mux.Vars(r)
+// 	societyID, err := strconv.Atoi(vars["societyID"])
+// 	if err != nil {
+// 		http.Error(w, err.Error(), http.StatusBadRequest)
+// 		return
+// 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(society)
-}
+// 	var society models.SocietyProfile
+// 	if err := database.DB.Where("society_id = ?", societyID).First(&society).Error; err != nil {
+// 		http.Error(w, err.Error(), http.StatusNotFound)
+// 		return
+// 	}
+
+//		w.Header().Set("Content-Type", "application/json")
+//		json.NewEncoder(w).Encode(society)
+//	}
 func RemoveSocietyByID(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	societyID, err := strconv.Atoi(vars["societyID"])
@@ -126,8 +137,7 @@ func RemoveSocietyByCoordinator(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(map[string]string{"message": "Society successfully deleted"})
 }
 
-
-func GetAllDetails(w http.ResponseWriter, r *http.Request){
+func FetchSocietyByID(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	id, err := strconv.Atoi(params["societyID"])
 	if err != nil {
@@ -137,9 +147,9 @@ func GetAllDetails(w http.ResponseWriter, r *http.Request){
 
 	var societyProfile models.SocietyProfile
 	err = database.DB.Preload("Testimonials").
-		Preload("SocietyCoordinator").
+		// Preload("SocietyCoordinator").
 		Preload("Events").
-		Preload("Achievements").
+		// Preload("Achievements").
 		Preload("StudentProfiles").
 		Preload("Galleries").
 		Preload("News").
