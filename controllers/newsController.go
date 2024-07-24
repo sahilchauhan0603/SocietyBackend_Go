@@ -12,15 +12,15 @@ import (
 
 func AddNewNews(w http.ResponseWriter, r *http.Request) {
 	
-	var news models.News
+	var news models.SocietyNews
 	if err := json.NewDecoder(r.Body).Decode(&news); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	// Check if table exists or create it if it doesn't
-	if !database.DB.Migrator().HasTable(&models.News{}) {
-		if err := database.DB.AutoMigrate(&models.News{}); err != nil {
+	if !database.DB.Migrator().HasTable(&models.SocietyNews{}) {
+		if err := database.DB.AutoMigrate(&models.SocietyNews{}); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -38,7 +38,7 @@ func AddNewNews(w http.ResponseWriter, r *http.Request) {
 
 func FetchAllNews(w http.ResponseWriter, r *http.Request) {
 
-	var newsList []models.News
+	var newsList []models.SocietyNews
 	if result := database.DB.Find(&newsList); result.Error != nil {
 		http.Error(w, result.Error.Error(), http.StatusInternalServerError)
 		return
@@ -58,7 +58,7 @@ func FetchNews(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var news models.News
+	var news models.SocietyNews
 	if err := database.DB.Where("society_id = ?", societyID).First(&news).Error; err != nil {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
@@ -78,7 +78,7 @@ func UpdateNews(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var news models.News
+	var news models.SocietyNews
 	if result := database.DB.First(&news, id); result.Error != nil {
 		http.Error(w, result.Error.Error(), http.StatusNotFound)
 		return
@@ -108,7 +108,7 @@ func RemoveNews(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := database.DB.Delete(&models.News{}, id).Error; err != nil {
+	if err := database.DB.Delete(&models.SocietyNews{}, id).Error; err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
