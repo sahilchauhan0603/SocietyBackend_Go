@@ -4,14 +4,25 @@ import (
 	"encoding/json"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/gorilla/mux"
 	database "github.com/sahilchauhan0603/society/config"
 	models "github.com/sahilchauhan0603/society/models"
 )
 
+type tempNews struct {
+	SocietyName string
+	SocietyID   uint
+	NewsID      uint
+	Title       string
+	Description string
+	DateOfNews  time.Time
+	Author      string
+}
+
 func AddNewNews(w http.ResponseWriter, r *http.Request) {
-	
+
 	var news models.SocietyNews
 	if err := json.NewDecoder(r.Body).Decode(&news); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -38,8 +49,11 @@ func AddNewNews(w http.ResponseWriter, r *http.Request) {
 
 func FetchAllNews(w http.ResponseWriter, r *http.Request) {
 
-	var newsList []models.SocietyNews
-	if result := database.DB.Find(&newsList); result.Error != nil {
+	var newsList []tempNews
+	if result := database.DB.Table("society_news").
+	Select("society_news.*,society_profiles.society_name").
+	Joins("JOIN society_profiles ON society_profiles.society_id = society_news.society_id").
+	Scan(&newsList); result.Error != nil {
 		http.Error(w, result.Error.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -58,15 +72,18 @@ func FetchNews(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var news models.SocietyNews
-	if err := database.DB.Where("society_id = ?", societyID).First(&news).Error; err != nil {
-		http.Error(w, err.Error(), http.StatusNotFound)
+	var info tempNews
+	if err := database.DB.Table("society_news").
+		Select("society_news.*,society_profiles.society_name").
+		Joins("JOIN society_profiles ON society_profiles.society_id = society_news.society_id").Where("society_news.society_id = ?", societyID).
+		Scan(&info).Error; err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(news)
+	json.NewEncoder(w).Encode(info)
 }
 
 func UpdateNews(w http.ResponseWriter, r *http.Request) {
@@ -96,7 +113,7 @@ func UpdateNews(w http.ResponseWriter, r *http.Request) {
 }
 
 func RemoveNews(w http.ResponseWriter, r *http.Request) {
-	
+
 	vars := mux.Vars(r)
 	societyID, err := strconv.Atoi(vars["societyID"])
 	if err != nil {
