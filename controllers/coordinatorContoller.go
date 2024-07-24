@@ -23,15 +23,15 @@ type tempo struct {
 
 func AddNewCoordinator(w http.ResponseWriter, r *http.Request) {
 
-	var coordinator models.Coordinator
+	var coordinator models.SocietyCoordinator
 	if err := json.NewDecoder(r.Body).Decode(&coordinator); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	// Check if table exists or create it if it doesn't
-	if !database.DB.Migrator().HasTable(&models.Coordinator{}) {
-		if err := database.DB.AutoMigrate(&models.Coordinator{}); err != nil {
+	if !database.DB.Migrator().HasTable(&models.SocietyCoordinator{}) {
+		if err := database.DB.AutoMigrate(&models.SocietyCoordinator{}); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -54,7 +54,7 @@ func UpdateCoordinator(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var coordinator models.Coordinator
+	var coordinator models.SocietyCoordinator
 	if result := database.DB.First(&coordinator, id); result.Error != nil {
 		http.Error(w, result.Error.Error(), http.StatusNotFound)
 		return
@@ -74,9 +74,9 @@ func UpdateCoordinator(w http.ResponseWriter, r *http.Request) {
 func FetchAllCoordinators(w http.ResponseWriter, r *http.Request) {
 
 	var data []tempo
-	if err := database.DB.Table("coordinators").
-		Select("coordinators.society_id, coordinators.coordinator_details, society_profiles.society_type, society_profiles.society_name, society_profiles.society_head, society_profiles.date_of_registration, society_profiles.society_description").
-		Joins("JOIN society_profiles ON society_profiles.society_id = coordinators.society_id").
+	if err := database.DB.Table("society_coordinators").
+		Select("society_coordinators.society_id, society_coordinators.coordinator_details, society_profiles.society_type, society_profiles.society_name, society_profiles.society_head, society_profiles.date_of_registration, society_profiles.society_description").
+		Joins("JOIN society_profiles ON society_profiles.society_id = society_coordinators.society_id").
 		Scan(&data).Error; err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -109,7 +109,7 @@ func RemoveCoordinator(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	societyID := vars["societyID"]
 
-	if err := database.DB.Where("society_id = ?", societyID).Delete(&models.Coordinator{}).Error; err != nil {
+	if err := database.DB.Where("society_id = ?", societyID).Delete(&models.SocietyCoordinator{}).Error; err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

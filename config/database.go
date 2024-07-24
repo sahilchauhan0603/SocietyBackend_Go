@@ -55,10 +55,10 @@ func DatabaseConnector() {
 		&models.SocietyEvent{},
 		&models.StudentAchievement{},
 		&models.StudentMarking{},
-		&models.Testimonial{},
-		&models.Coordinator{},
-		&models.Gallery{},
-		&models.News{},
+		&models.SocietyTestimonial{},
+		&models.SocietyCoordinator{},
+		&models.SocietyGallery{},
+		&models.SocietyNews{},
 	); err != nil {
 		log.Fatal(err)
 	}

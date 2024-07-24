@@ -12,15 +12,15 @@ import (
 
 func AddNewGallery(w http.ResponseWriter, r *http.Request) {
 
-	var gallery models.Gallery
+	var gallery models.SocietyGallery
 	if err := json.NewDecoder(r.Body).Decode(&gallery); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	// Check if table exists or create it if it doesn't
-	if !database.DB.Migrator().HasTable(&models.Gallery{}) {
-		if err := database.DB.AutoMigrate(&models.Gallery{}); err != nil {
+	if !database.DB.Migrator().HasTable(&models.SocietyGallery{}) {
+		if err := database.DB.AutoMigrate(&models.SocietyGallery{}); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -39,7 +39,7 @@ func AddNewGallery(w http.ResponseWriter, r *http.Request) {
 
 func FetchAllGalleries(w http.ResponseWriter, r *http.Request) {
 
-	var galleries []models.Gallery
+	var galleries []models.SocietyGallery
 	if result := database.DB.Find(&galleries); result.Error != nil {
 		http.Error(w, result.Error.Error(), http.StatusInternalServerError)
 		return
@@ -59,7 +59,7 @@ func FetchGallery(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var gallery models.Gallery
+	var gallery models.SocietyGallery
 	if err := database.DB.Where("society_id = ?", societyID).First(&gallery).Error; err != nil {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
@@ -78,7 +78,7 @@ func UpdateGallery(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var gallery models.Gallery
+	var gallery models.SocietyGallery
 	if result := database.DB.First(&gallery, id); result.Error != nil {
 		http.Error(w, result.Error.Error(), http.StatusNotFound)
 		return
@@ -107,7 +107,7 @@ func RemoveGallery(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := database.DB.Delete(&models.Gallery{}, id).Error; err != nil {
+	if err := database.DB.Delete(&models.SocietyGallery{}, id).Error; err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
