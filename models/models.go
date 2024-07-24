@@ -96,22 +96,22 @@ type StudentMarking struct {
 
 
 type Testimonial struct {
-	EnrollmentNo           uint `gorm:"index"`
+	EnrollmentNo           uint `gorm:"primaryKey;autoIncrement:false"`
 	TestimonialDescription string
 }
 
 type Coordinator struct {
-	SocietyID          uint `gorm:"index"`
+	SocietyID          uint `gorm:"primaryKey;autoIncrement:false"`
 	CoordinatorDetails string
 }
 
 type Gallery struct {
-	SocietyID uint `gorm:"index"`
+	SocietyID uint `gorm:"primaryKey;autoIncrement:false"`
 	Image     string
 }
 
 type News struct {
-	SocietyID   uint `gorm:"index"`
+	SocietyID   uint `gorm:"primaryKey;autoIncrement:false"`
 	Title       string
 	Description string
 	DateOfNews  time.Time
