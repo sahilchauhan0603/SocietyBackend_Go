@@ -96,14 +96,14 @@ func InitializeRoutes(router *mux.Router) {
 	r.HandleFunc("/galleries", controllers.AddNewGallery).Methods("POST")
 	r.HandleFunc("/galleries", controllers.FetchAllGalleries).Methods("GET")
 	r.HandleFunc("/galleries/{society_id}", controllers.FetchGallery).Methods("GET")
-	r.HandleFunc("/galleries/{society_id}", controllers.UpdateGallery).Methods("PUT")
-	r.HandleFunc("/galleries/{society_id}", controllers.RemoveGallery).Methods("DELETE")
+	r.HandleFunc("/galleries/{societyID}", controllers.UpdateGallery).Methods("PUT")
+	r.HandleFunc("/galleries/{societyID}", controllers.RemoveGallery).Methods("DELETE")
 
 	//News
 	r.HandleFunc("/news", controllers.AddNewNews).Methods("POST")
 	r.HandleFunc("/news", controllers.FetchAllNews).Methods("GET")
 	r.HandleFunc("/news/{society_id}", controllers.FetchNews).Methods("GET")
-	r.HandleFunc("/news/{society_id}", controllers.UpdateNews).Methods("PUT")
-	r.HandleFunc("/news/{society_id}", controllers.RemoveNews).Methods("DELETE")
+	r.HandleFunc("/news/{societyID}", controllers.UpdateNews).Methods("PUT")
+	r.HandleFunc("/news/{societyID}", controllers.RemoveNews).Methods("DELETE")
 
 }
