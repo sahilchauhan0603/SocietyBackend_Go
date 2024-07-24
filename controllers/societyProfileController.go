@@ -125,3 +125,31 @@ func RemoveSocietyByCoordinator(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(map[string]string{"message": "Society successfully deleted"})
 }
+
+
+func GetAllDetails(w http.ResponseWriter, r *http.Request){
+	params := mux.Vars(r)
+	id, err := strconv.Atoi(params["societyID"])
+	if err != nil {
+		http.Error(w, "Invalid ID", http.StatusBadRequest)
+		return
+	}
+
+	var societyProfile models.SocietyProfile
+	err = database.DB.Preload("Testimonials").
+		Preload("SocietyCoordinator").
+		Preload("Events").
+		Preload("Achievements").
+		Preload("StudentProfiles").
+		Preload("Galleries").
+		Preload("News").
+		First(&societyProfile, id).Error
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(societyProfile)
+}
