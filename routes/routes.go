@@ -106,4 +106,7 @@ func InitializeRoutes(router *mux.Router) {
 	r.HandleFunc("/news/{societyID}", controllers.UpdateNews).Methods("PUT")
 	r.HandleFunc("/news/{societyID}", controllers.RemoveNews).Methods("DELETE")
 
+	//test
+	r.HandleFunc("/test/{societyID}", controllers.GetAllDetails).Methods("GET")
+
 }
