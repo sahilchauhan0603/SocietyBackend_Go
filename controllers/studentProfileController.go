@@ -117,3 +117,21 @@ func RemoveStudent(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(map[string]string{"message": "Student successfully deleted"})
 }
+
+func FetchStudentBySocietyID(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	societyID, err := strconv.ParseUint(vars["societyID"], 10, 64)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	var student []models.StudentProfile
+	if err := database.DB.Where("society_id = ?", societyID).Find(&student).Error; err != nil {
+		http.Error(w, err.Error(), http.StatusNotFound)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(student)
+}

@@ -53,6 +53,8 @@ func InitializeRoutes(router *mux.Router) {
 	r.HandleFunc("/societies/coordinator/{societyCoordinator}", controllers.RemoveSocietyByCoordinator).Methods("DELETE")
 	//test
 	r.HandleFunc("/societies/{societyID}", controllers.FetchSocietyByID).Methods("GET")
+	// get all members of a society
+	r.HandleFunc("/societies/members/{societyID}",controllers.FetchStudentBySocietyID).Methods("GET")
 
 
 	r.HandleFunc("/achievements", controllers.AddNewAchievement).Methods("POST")
