@@ -71,8 +71,9 @@ func FetchGallery(w http.ResponseWriter, r *http.Request) {
 }
 
 func UpdateGallery(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	id, err := strconv.Atoi(vars["id"])
+
+	params := mux.Vars(r)
+	id, err := strconv.Atoi(params["societyID"])
 	if err != nil {
 		http.Error(w, "Invalid ID", http.StatusBadRequest)
 		return
@@ -89,11 +90,7 @@ func UpdateGallery(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := database.DB.Save(&gallery).Error; err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
+	database.DB.Save(&gallery)
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(gallery)
@@ -101,18 +98,17 @@ func UpdateGallery(w http.ResponseWriter, r *http.Request) {
 
 func RemoveGallery(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	id, err := strconv.Atoi(vars["id"])
+	societyID, err := strconv.Atoi(vars["societyID"])
 	if err != nil {
-		http.Error(w, "Invalid ID", http.StatusBadRequest)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	if err := database.DB.Delete(&models.SocietyGallery{}, id).Error; err != nil {
+	if err := database.DB.Where("society_id = ?", societyID).Delete(&models.SocietyGallery{}).Error; err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(map[string]string{"message": "Gallery successfully deleted"})
+	json.NewEncoder(w).Encode(map[string]string{"message": "Society Gallery successfully deleted"})
 }
