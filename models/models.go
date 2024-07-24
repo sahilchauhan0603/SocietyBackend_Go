@@ -2,7 +2,6 @@ package models
 
 import "time"
 
-
 type SocietyRole struct {
 	RoleID           int64 `gorm:"primaryKey;autoIncrement"`
 	Rolename         string
@@ -11,7 +10,6 @@ type SocietyRole struct {
 	LinkBySociety    string
 	Users            []SocietyUser `gorm:"foreignKey:RoleID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 }
-
 
 type SocietyUser struct {
 	UserID          int64 `gorm:"primaryKey;autoIncrement"`
@@ -36,7 +34,6 @@ type SocietyProfile struct {
 	Galleries          []Gallery            `gorm:"foreignKey:SocietyID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	News               []News               `gorm:"foreignKey:SocietyID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 }
-
 
 type StudentProfile struct {
 	EnrollmentNo         uint `gorm:"primaryKey"`
@@ -79,9 +76,8 @@ type SocietyEvent struct {
 	EventDateTime time.Time
 }
 
-
 type StudentAchievement struct {
-	EnrollmentNo  uint
+	EnrollmentNo  uint `gorm:"not null;index"`
 	AchievementID uint `gorm:"primaryKey;autoIncrement:false"`
 	Title         string
 	Description   string
@@ -89,29 +85,32 @@ type StudentAchievement struct {
 }
 
 type StudentMarking struct {
-	EnrollmentNo  uint `gorm:"primaryKey;autoIncrement:false"`
+	EnrollmentNo  uint `gorm:"not null;index"`
+	MarkingID     uint `gorm:"primaryKey;autoIncrement:false"`
 	StudentGrades string
 }
 
-
-
 type Testimonial struct {
-	EnrollmentNo           uint `gorm:"primaryKey;autoIncrement:false"`
+	EnrollmentNo         uint
+	TestimonialID          uint `gorm:"primaryKey;autoIncrement:false"`
 	TestimonialDescription string
 }
 
 type Coordinator struct {
-	SocietyID          uint `gorm:"primaryKey;autoIncrement:false"`
+	SocietyID          uint 
+	CoordinatorID      uint `gorm:"primaryKey;autoIncrement:false"`
 	CoordinatorDetails string
 }
 
 type Gallery struct {
-	SocietyID uint `gorm:"primaryKey;autoIncrement:false"`
+	SocietyID uint 
+	GalleryID uint `gorm:"primaryKey;autoIncrement:false"`
 	Image     string
 }
 
 type News struct {
-	SocietyID   uint `gorm:"primaryKey;autoIncrement:false"`
+	SocietyID   uint 
+	NewsID      uint `gorm:"primaryKey;autoIncrement:false"`
 	Title       string
 	Description string
 	DateOfNews  time.Time
