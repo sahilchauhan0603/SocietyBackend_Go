@@ -27,12 +27,13 @@ type SocietyProfile struct {
 	SocietyHead        string
 	DateOfRegistration time.Time
 	SocietyDescription string
-	SocietyCoordinator []SocietyCoordinator        `gorm:"foreignKey:SocietyID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	Testimonials       []SocietyTestimonial `gorm:"foreignKey:SocietyID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	SocietyCoordinator []SocietyCoordinator `gorm:"foreignKey:SocietyID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	Events             []SocietyEvent       `gorm:"foreignKey:SocietyID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	Achievements       []SocietyAchievement `gorm:"foreignKey:SocietyID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	StudentProfiles    []StudentProfile     `gorm:"foreignKey:SocietyID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
-	Galleries          []SocietyGallery            `gorm:"foreignKey:SocietyID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
-	News               []SocietyNews               `gorm:"foreignKey:SocietyID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	Galleries          []SocietyGallery     `gorm:"foreignKey:SocietyID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	News               []SocietyNews        `gorm:"foreignKey:SocietyID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 }
 
 type StudentProfile struct {
@@ -53,7 +54,7 @@ type StudentProfile struct {
 	LinkedInProfile      *string
 	TwitterProfile       *string
 	StudentAchievements  []StudentAchievement `gorm:"foreignKey:EnrollmentNo;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
-	Testimonials         []SocietyTestimonial        `gorm:"foreignKey:EnrollmentNo;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	Testimonials         []SocietyTestimonial `gorm:"foreignKey:EnrollmentNo;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	StudentMarking       []StudentMarking     `gorm:"foreignKey:EnrollmentNo;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 }
 
@@ -93,6 +94,7 @@ type StudentMarking struct {
 type SocietyTestimonial struct {
 	EnrollmentNo           uint `gorm:"not null;index"`
 	TestimonialID          uint `gorm:"primaryKey;autoIncrement:false"`
+	SocietyID              uint 
 	TestimonialDescription string
 }
 
