@@ -91,10 +91,10 @@ func FetchCoordinatorByID(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	societyID := vars["societyID"]
 
-	var info tempo
-	if err := database.DB.Table("coordinators").
-	    Select("coordinators.society_id, coordinators.coordinator_details, society_profiles.society_type, society_profiles.society_name, society_profiles.society_head, society_profiles.date_of_registration, society_profiles.society_description").
-		Joins("JOIN society_profiles ON society_profiles.society_id = coordinators.society_id").Where("coordinators.society_id = ?", societyID).
+	var info []tempo
+	if err := database.DB.Table("society_coordinators").
+	    Select("society_coordinators.society_id, society_coordinators.coordinator_details, society_profiles.society_type, society_profiles.society_name, society_profiles.society_head, society_profiles.date_of_registration, society_profiles.society_description").
+		Joins("JOIN society_profiles ON society_profiles.society_id = society_coordinators.society_id").Where("society_coordinators.society_id = ?", societyID).
 		Scan(&info).Error; err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

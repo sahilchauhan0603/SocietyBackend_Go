@@ -57,7 +57,9 @@ func UpdateStudentAchievement(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(achievement)
 }
+
 func FetchAllStudentAchievements(w http.ResponseWriter, r *http.Request) {
+
 	var achievements []models.StudentAchievement
 	if err := database.DB.Order("achievement_id ASC").Find(&achievements).Error; err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -67,11 +69,13 @@ func FetchAllStudentAchievements(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(achievements)
 }
+
 func FetchStudentAchievements(w http.ResponseWriter, r *http.Request) {
+
 	vars := mux.Vars(r)
 	enrollmentNo := vars["enrollmentNo"]
 
-	var achievement models.StudentAchievement
+	var achievement []models.StudentAchievement
 	if err := database.DB.Where("enrollment_no = ?", enrollmentNo).First(&achievement).Error; err != nil {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
@@ -80,6 +84,22 @@ func FetchStudentAchievements(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(achievement)
 }
+
+func FetchStudentAchievementsSocietyID(w http.ResponseWriter, r *http.Request) {
+	
+	vars := mux.Vars(r)
+	societyID := vars["societyID"]
+
+	var achievement []models.StudentAchievement
+	if err := database.DB.Where("society_id = ?", societyID).First(&achievement).Error; err != nil {
+		http.Error(w, err.Error(), http.StatusNotFound)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(achievement)
+}
+
 func RemoveStudentAchievement(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	enrollmentNo := vars["enrollmentNo"]

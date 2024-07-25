@@ -59,6 +59,7 @@ func UpdateAchievement(w http.ResponseWriter, r *http.Request) {
 }
 
 func FetchAllAchievements(w http.ResponseWriter, r *http.Request) {
+	
 	var achievements []models.SocietyAchievement
 	if err := database.DB.Order("society_achievement_id ASC").Find(&achievements).Error; err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -68,6 +69,22 @@ func FetchAllAchievements(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(achievements)
 }
+
+func FetchSocietyAchievementsSocietyID(w http.ResponseWriter, r *http.Request) {
+	
+	vars := mux.Vars(r)
+	societyID := vars["societyID"]
+
+	var achievement []models.SocietyAchievement
+	if err := database.DB.Where("society_id = ?", societyID).First(&achievement).Error; err != nil {
+		http.Error(w, err.Error(), http.StatusNotFound)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(achievement)
+}
+
 func RemoveAchievement(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	societyID, err := strconv.Atoi(vars["societyID"])

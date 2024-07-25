@@ -57,6 +57,7 @@ func UpdateMarking(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(marking)
 }
+
 func FetchAllMarkings(w http.ResponseWriter, r *http.Request) {
 	var markings []models.StudentMarking
 	if err := database.DB.Order("enrollment_no ASC").Find(&markings).Error; err != nil {
@@ -67,6 +68,22 @@ func FetchAllMarkings(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(markings)
 }
+
+func FetchMarkingSocietyID(w http.ResponseWriter, r *http.Request) {
+	
+	vars := mux.Vars(r)
+	societyID := vars["societyID"]
+
+	var achievement []models.StudentMarking
+	if err := database.DB.Where("society_id = ?", societyID).First(&achievement).Error; err != nil {
+		http.Error(w, err.Error(), http.StatusNotFound)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(achievement)
+}
+
 func RemoveMarking(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	enrollmentNo := vars["enrollmentNo"]

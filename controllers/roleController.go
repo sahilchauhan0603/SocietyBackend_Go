@@ -52,8 +52,23 @@ func FetchRole(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	rolename := vars["name"]
 
-	var role models.SocietyRole
+	var role []models.SocietyRole
 	if err := database.DB.Where("rolename = ?", rolename).First(&role).Error; err != nil {
+		http.Error(w, err.Error(), http.StatusNotFound)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(role)
+}
+
+func FetchRoleSocietyID(w http.ResponseWriter, r *http.Request) {
+
+	vars := mux.Vars(r)
+	societyID := vars["societyID"]
+
+	var role []models.SocietyRole
+	if err := database.DB.Where("society_id = ?", societyID).First(&role).Error; err != nil {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	}
@@ -90,9 +105,9 @@ func UpdateRole(w http.ResponseWriter, r *http.Request) {
 func RemoveRole(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
-	rolename := vars["name"]
+	roleID := vars["roleID"]
 
-	if err := database.DB.Where("rolename = ?", rolename).Delete(&models.SocietyRole{}).Error; err != nil {
+	if err := database.DB.Where("role_id = ?", roleID).Delete(&models.SocietyRole{}).Error; err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
