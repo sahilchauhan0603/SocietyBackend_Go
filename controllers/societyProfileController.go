@@ -11,6 +11,7 @@ import (
 )
 
 func AddNewSociety(w http.ResponseWriter, r *http.Request) {
+
 	var society models.SocietyProfile
 	if err := json.NewDecoder(r.Body).Decode(&society); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -32,6 +33,7 @@ func AddNewSociety(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(society)
 }
+
 func UpdateSociety(w http.ResponseWriter, r *http.Request) {
 
 	params := mux.Vars(r)
@@ -57,9 +59,11 @@ func UpdateSociety(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(society)
 }
+
 func FetchAllSocieties(w http.ResponseWriter, r *http.Request) {
 
 	var societies []struct {
+		SocietyID          uint
 		SocietyType        string
 		SocietyName        string
 		SocietyDescription string
@@ -67,7 +71,7 @@ func FetchAllSocieties(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := database.DB.Model(&models.SocietyProfile{}).
-		Select("society_type, society_name, society_description, s_image").
+		Select("society_id, society_type, society_name, society_description, s_image").
 		Order("society_id ASC").
 		Find(&societies).Error; err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -75,13 +79,14 @@ func FetchAllSocieties(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-    json.NewEncoder(w).Encode(societies)
+	json.NewEncoder(w).Encode(societies)
 }
+
 func FetchSocietyByCoordinator(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	societyCoordinator := vars["societyCoordinator"]
 
-	var society models.SocietyProfile
+	var society []models.SocietyProfile
 	if err := database.DB.Where("society_coordinator = ?", societyCoordinator).First(&society).Error; err != nil {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
@@ -138,6 +143,7 @@ func RemoveSocietyByCoordinator(w http.ResponseWriter, r *http.Request) {
 }
 
 func FetchSocietyByID(w http.ResponseWriter, r *http.Request) {
+
 	params := mux.Vars(r)
 	id, err := strconv.Atoi(params["societyID"])
 	if err != nil {
@@ -145,7 +151,7 @@ func FetchSocietyByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var societyProfile models.SocietyProfile
+	var societyProfile []models.SocietyProfile
 	err = database.DB.Preload("Testimonials").
 		// Preload("SocietyCoordinator").
 		Preload("Events").

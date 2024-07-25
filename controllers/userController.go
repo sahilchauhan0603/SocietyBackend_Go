@@ -57,9 +57,24 @@ func GetUserID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var user models.SocietyUser
+	var user []models.SocietyUser
 	if result := database.DB.First(&user, id); result.Error != nil {
 		http.Error(w, result.Error.Error(), http.StatusNotFound)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(user)
+}
+
+func FetchUsersSocietyID(w http.ResponseWriter, r *http.Request) {
+	
+	vars := mux.Vars(r)
+	societyID := vars["societyID"]
+
+	var user []models.SocietyUser
+	if err := database.DB.Where("society_id = ?", societyID).First(&user).Error; err != nil {
+		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	}
 
@@ -94,17 +109,14 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 
 func DeleteUser(w http.ResponseWriter, r *http.Request) {
 
-	params := mux.Vars(r)
-	id, err := strconv.Atoi(params["id"])
-	if err != nil {
-		http.Error(w, "Invalid ID", http.StatusBadRequest)
+	vars := mux.Vars(r)
+	userID := vars["id"]
+
+	if err := database.DB.Where("user_id = ?", userID).Delete(&models.SocietyUser{}).Error; err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	if result := database.DB.Delete(&models.SocietyUser{}, id); result.Error != nil {
-		http.Error(w, result.Error.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	w.WriteHeader(http.StatusNoContent)
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]string{"message": "Role successfully deleted"})
 }

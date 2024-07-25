@@ -75,7 +75,7 @@ func FetchStudent(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var student models.StudentProfile
+	var student []models.StudentProfile
 	if err := database.DB.Where("enrollment_no = ?", enrollmentNo).First(&student).Error; err != nil {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
@@ -92,14 +92,14 @@ func FetchContributions(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var student models.StudentProfile
+	var student []models.StudentProfile
 	if err := database.DB.Where("enrollment_no = ?", enrollmentNo).Select("student_contributions").First(&student).Error; err != nil {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(student.StudentContributions)
+	json.NewEncoder(w).Encode(student)
 }
 func RemoveStudent(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)

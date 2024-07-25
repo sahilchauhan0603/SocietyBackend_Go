@@ -72,7 +72,7 @@ func FetchNews(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var info tempNews
+	var info []tempNews
 	if err := database.DB.Table("society_news").
 		Select("society_news.*,society_profiles.society_name").
 		Joins("JOIN society_profiles ON society_profiles.society_id = society_news.society_id").Where("society_news.society_id = ?", societyID).

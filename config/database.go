@@ -47,9 +47,9 @@ func DatabaseConnector() {
 
 	//Migrate the schema
 	if err := DB.AutoMigrate(
+		&models.SocietyProfile{},
 		&models.SocietyRole{},
 		&models.SocietyUser{},
-		&models.SocietyProfile{},
 		&models.StudentProfile{},
 		&models.SocietyAchievement{},
 		&models.SocietyEvent{},
@@ -94,12 +94,6 @@ func DatabaseConnector() {
 // 	DB, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
 // 	if err != nil {
 // 		log.Fatal("failed to connect database: ", err)
-// 	}
-
-// 	// First migrate the admin table
-// 	err = DB.AutoMigrate(&models.User{})
-// 	if err != nil {
-// 		log.Fatalf("failed to migrate Admin: %v", err)
 // 	}
 
 // 	// Migrate the schema

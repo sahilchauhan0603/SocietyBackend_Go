@@ -59,7 +59,7 @@ func FetchGallery(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var gallery models.SocietyGallery
+	var gallery []models.SocietyGallery
 	if err := database.DB.Where("society_id = ?", societyID).First(&gallery).Error; err != nil {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return

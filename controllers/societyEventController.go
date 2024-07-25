@@ -57,6 +57,7 @@ func UpdateEvent(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(event)
 }
+
 func FetchAllEvents(w http.ResponseWriter, r *http.Request) {
 	var events []models.SocietyEvent
 	if err := database.DB.Order("event_id ASC").Find(&events).Error; err != nil {
@@ -67,6 +68,7 @@ func FetchAllEvents(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(events)
 }
+
 func FetchEventByID(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	eventID, err := strconv.Atoi(vars["eventID"])
@@ -75,7 +77,7 @@ func FetchEventByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var event models.SocietyEvent
+	var event []models.SocietyEvent
 	if err := database.DB.Where("event_id = ?", eventID).First(&event).Error; err != nil {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
@@ -84,6 +86,7 @@ func FetchEventByID(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(event)
 }
+
 func FetchEventsBySocietyID(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	societyID, err := strconv.Atoi(vars["societyID"])
