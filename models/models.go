@@ -82,6 +82,7 @@ type SocietyEvent struct {
 	EventType     string
 	ModeOfEvent   string
 	Location      string
+	LinkToEvent   string
 	EventDateTime time.Time
 }
 
