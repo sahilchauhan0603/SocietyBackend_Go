@@ -133,4 +133,6 @@ func InitializeRoutes(router *mux.Router) {
 	r.HandleFunc("/news/{societyID}", controllers.UpdateNews).Methods("PUT")
 	r.HandleFunc("/news/{societyID}", controllers.RemoveNews).Methods("DELETE")
 
+	r.HandleFunc("/contact",controllers.ContactUSHandler).Methods("POST")
+
 }
