@@ -36,14 +36,21 @@ func AddNewRole(w http.ResponseWriter, r *http.Request) {
 
 func FetchAllRoles(w http.ResponseWriter, r *http.Request) {
 
-	var roles []models.SocietyRole
-	if result := database.DB.Find(&roles); result.Error != nil {
-		http.Error(w, result.Error.Error(), http.StatusInternalServerError)
+	var roles []struct {
+		RoleID          uint
+		RoleType        string
+		Rolename        string
+		RoleDescription string
+	}
+	if err := database.DB.Model(&models.SocietyRole{}).
+		Select("role_id, role_type, rolename, role_description").
+		Order("role_id ASC").
+		Find(&roles).Error; err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(roles)
 }
 
@@ -67,8 +74,18 @@ func FetchRoleSocietyID(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	societyID := vars["societyID"]
 
-	var role []models.SocietyRole
-	if err := database.DB.Where("society_id = ?", societyID).First(&role).Error; err != nil {
+	type roles struct {
+		RoleID           int64
+		RoleType         string
+		Rolename         string
+		RoleDescription  string
+		LastDateToApply  string
+		Responsibilities string
+		LinkBySociety    string
+	}
+
+	var role []roles
+	if err := database.DB.Model(&models.SocietyRole{}).Select("role_id, role_type, rolename, role_description, last_date_to_apply, responsibilities, link_by_society").Where("society_id = ?", societyID).Scan(&role).Error; err != nil {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	}

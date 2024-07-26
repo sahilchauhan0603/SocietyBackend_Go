@@ -83,6 +83,7 @@ func InitializeRoutes(router *mux.Router) {
 	r.HandleFunc("/events/society/{societyID}", controllers.FetchEventsBySocietyID).Methods("GET")
 	r.HandleFunc("/events/{eventID}", controllers.RemoveEvent).Methods("DELETE")
 	r.HandleFunc("/events/society/{societyID}", controllers.RemoveEventsBySocietyID).Methods("DELETE")
+	r.HandleFunc("/events/{societyID}/{eventID}", controllers.RegisterEventHandler).Methods("POST")
 
 	// Student Achievements
 	r.HandleFunc("/studentachievements", controllers.AddNewStudentAchievement).Methods("POST")
@@ -132,6 +133,7 @@ func InitializeRoutes(router *mux.Router) {
 	r.HandleFunc("/news/{society_id}", controllers.FetchNews).Methods("GET")
 	r.HandleFunc("/news/{societyID}", controllers.UpdateNews).Methods("PUT")
 	r.HandleFunc("/news/{societyID}", controllers.RemoveNews).Methods("DELETE")
+
 
 	r.HandleFunc("/contact",controllers.ContactUSHandler).Methods("POST")
 
