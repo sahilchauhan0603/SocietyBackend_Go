@@ -4,7 +4,9 @@ import "time"
 
 type SocietyRole struct {
 	RoleID           int64 `gorm:"primaryKey;autoIncrement"`
+	RoleType         string
 	Rolename         string
+	RoleDescription  string
 	LastDateToApply  string
 	Responsibilities string
 	LinkBySociety    string
@@ -68,7 +70,7 @@ type StudentProfile struct {
 
 type SocietyAchievement struct {
 	SocietyID            uint `gorm:"not null;index"`
-	SocietyAchievementID uint `gorm:"not null;index"`
+	SocietyAchievementID uint `gorm:"primaryKey;autoIncrement:false"`
 	Title                string
 	Description          string
 	DateAchieved         time.Time
@@ -76,7 +78,7 @@ type SocietyAchievement struct {
 
 type SocietyEvent struct {
 	SocietyID     uint `gorm:"not null;index"`
-	EventID       uint `gorm:"primaryKey;autoIncrement:false"`
+	EventID       uint 
 	Title         string
 	Description   string
 	EventType     string
