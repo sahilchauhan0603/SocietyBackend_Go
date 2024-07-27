@@ -11,17 +11,17 @@ type SocietyRole struct {
 	Responsibilities string
 	LinkBySociety    string
 	SocietyID        int64         `gorm:"not null;index"`
-	Users            []SocietyUser `gorm:"foreignKey:RoleID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 }
 
 type SocietyUser struct {
-	UserID          int64 `gorm:"primaryKey;autoIncrement"`
-	Username        string
-	Password        string
-	Email           string
-	RoleID          int64            `gorm:"not null;index"`
-	SocietyID       int64            `gorm:"not null;index"`
-	StudentProfiles []StudentProfile `gorm:"foreignKey:UserID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	UserID       int64 `gorm:"primaryKey;autoIncrement"`
+	FirstName    string
+	LastName     string
+	Password     string
+	Branch       string
+	BatchYear    string
+	Email        string `gorm:"not null;unique"`
+	EnrollmentNo string `gorm:"not null;unique"`
 }
 
 type SocietyProfile struct {
@@ -39,7 +39,6 @@ type SocietyProfile struct {
 	StudentProfiles     []StudentProfile     `gorm:"foreignKey:SocietyID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	Galleries           []SocietyGallery     `gorm:"foreignKey:SocietyID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	News                []SocietyNews        `gorm:"foreignKey:SocietyID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
-	SocietyUsers        []SocietyUser        `gorm:"foreignKey:SocietyID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	SocietyRoles        []SocietyRole        `gorm:"foreignKey:SocietyID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	StudentAchievements []StudentAchievement `gorm:"foreignKey:SocietyID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	SocietyAchievements []SocietyAchievement `gorm:"foreignKey:SocietyID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
@@ -48,7 +47,6 @@ type SocietyProfile struct {
 
 type StudentProfile struct {
 	EnrollmentNo         uint `gorm:"primaryKey"`
-	UserID               uint `gorm:"not null;index"`
 	FirstName            string
 	LastName             string
 	Branch               string
@@ -78,7 +76,7 @@ type SocietyAchievement struct {
 
 type SocietyEvent struct {
 	SocietyID     uint `gorm:"not null;index"`
-	EventID       uint 
+	EventID       uint
 	Title         string
 	Description   string
 	EventType     string
@@ -130,4 +128,11 @@ type SocietyNews struct {
 	Description string
 	DateOfNews  time.Time
 	Author      string
+}
+
+type SocietyOTP struct {
+	OtpID     int64     `gorm:"primaryKey;autoIncrement"`
+	Email     string    `gorm:"not null;unique"`
+	Code      string    `gorm:"not null"`
+	ExpiresAt time.Time `gorm:"not null"`
 }
