@@ -26,6 +26,8 @@ func InitializeRoutes(router *mux.Router) {
 	registerHandler := http.HandlerFunc(controllers.Register)
 	router.Handle("/verifyOTP", middleware.OTPVerify(registerHandler)).Methods("POST")
 
+	router.HandleFunc("/delete-table/{table}", controllers.DeleteTableHandler).Methods("DELETE")
+
 	// User routes
 	r := router.PathPrefix("/api/v1").Subrouter()
 	// r.Use(middleware.JWTVerify)

@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -68,7 +69,7 @@ func GetUserID(w http.ResponseWriter, r *http.Request) {
 }
 
 func FetchUsersSocietyID(w http.ResponseWriter, r *http.Request) {
-	
+
 	vars := mux.Vars(r)
 	societyID := vars["societyID"]
 
@@ -119,4 +120,17 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(map[string]string{"message": "Role successfully deleted"})
+}
+
+func DeleteTableHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	tableName := vars["table"]
+
+	if err := database.DB.Migrator().DropTable(tableName); err != nil {
+		http.Error(w, fmt.Sprintf("failed to drop table: %v", err), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprintf(w, "table dropped successfully")
 }
