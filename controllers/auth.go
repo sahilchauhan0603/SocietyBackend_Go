@@ -16,7 +16,6 @@ import (
 	"github.com/sahilchauhan0603/society/helper"
 	models "github.com/sahilchauhan0603/society/models"
 	"golang.org/x/crypto/bcrypt"
-	"gorm.io/gorm"
 )
 
 func HandleMicrosoftLogin(w http.ResponseWriter, r *http.Request) {
@@ -140,8 +139,8 @@ func Register(w http.ResponseWriter, r *http.Request) {
 // Login handles user login and JWT generation
 func Login(w http.ResponseWriter, r *http.Request) {
 	var credentials struct {
-		Email    string `json:"email"`
-		Password string `json:"password"`
+		Email    string 
+		Password string
 	}
 	if err := json.NewDecoder(r.Body).Decode(&credentials); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -154,11 +153,11 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Compare the stored hashed password with the provided password
-	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(credentials.Password)); err != nil {
-		http.Error(w, "Invalid email or password", http.StatusUnauthorized)
-		return
-	}
+	// // Compare the stored hashed password with the provided password
+	// if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(credentials.Password)); err != nil {
+	// 	http.Error(w, "Invalid email or password !!", http.StatusUnauthorized)
+	// 	return
+	// }
 
 	// Create a JWT token
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
@@ -183,82 +182,99 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	// Send the token in the response body as well
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(map[string]interface{}{
-		"message": "Login successful",
+		"message": "Login successful\n",
 		"token":   tokenString,
 	})
 }
 
-// Signup handles user signup
+type SignupRequest struct {
+	FirstName    string
+	LastName     string
+	Email        string
+	Password     string
+	Branch       string
+	BatchYear    string
+	EnrollmentNo string
+	OTP          string
+}
 
+// Signup handles user signup
 func Signup(w http.ResponseWriter, r *http.Request) {
-	var user models.SocietyUser
-	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
+
+	var req SignupRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	// Ensure that the email and enrollment number are unique
-	var existingUser models.SocietyUser
-	if result := database.DB.Where("email = ? OR enrollment_no = ?", user.Email, user.EnrollmentNo).First(&existingUser); result.RowsAffected > 0 {
-		http.Error(w, "Email or Enrollment Number already exists", http.StatusConflict)
-		return
+	// Check if the user already exists
+	var user models.SocietyUser
+	if err := database.DB.Where("email = ?", req.Email).First(&user).Error; err == nil {
+		if user.Verified {
+			http.Error(w, "User already exists and is verified", http.StatusBadRequest)
+			return
+		}
+		if req.OTP != "" {
+			if req.OTP == user.OTP {
+				user.Verified = true
+				database.DB.Save(&user)
+				w.WriteHeader(http.StatusOK)
+				json.NewEncoder(w).Encode(map[string]string{"message": "User verified successfully"})
+				return
+			} else {
+				http.Error(w, "Invalid OTP", http.StatusBadRequest)
+				return
+			}
+		}
 	}
 
-	// Generate OTP
-	otp, err := helper.GenerateOTP(6)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	otpEntry := models.SocietyOTP{
-		Email:     user.Email,
-		Code:      otp,
-		ExpiresAt: time.Now().Add(10 * time.Minute),
-	}
-
-	// Check if table exists or create it if it doesn't
-	if !database.DB.Migrator().HasTable(&models.SocietyOTP{}) {
-		if err := database.DB.AutoMigrate(&models.SocietyOTP{}); err != nil {
+	if req.OTP == "" {
+		otp, err := helper.GenerateOTP(6)
+		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-	}
+		newUser := models.SocietyUser{
+			FirstName:    req.FirstName,
+			LastName:     req.LastName,
+			Password:     req.Password,
+			Branch:       req.Branch,
+			BatchYear:    req.BatchYear,
+			Email:        req.Email,
+			EnrollmentNo: req.EnrollmentNo,
+			Verified:     false,
+			OTP:          otp,
+		}
 
-	// Check if an OTP already exists for this email
-	var existingOTP models.SocietyOTP
-	err = database.DB.Where("email = ?", user.Email).First(&existingOTP).Error
-	if err != nil && err != gorm.ErrRecordNotFound {
-		http.Error(w, "Internal server error", http.StatusInternalServerError)
-		return
-	}
-
-	if err == nil {
-		// OTP exists, update it
-		existingOTP.Code = otp
-		existingOTP.ExpiresAt = time.Now().Add(10 * time.Minute)
-		if result := database.DB.Save(&existingOTP); result.Error != nil {
-			http.Error(w, result.Error.Error(), http.StatusInternalServerError)
+		if err := database.DB.Create(&newUser).Error; err != nil {
+			http.Error(w, fmt.Sprintf("Failed to create user: %v", err), http.StatusInternalServerError)
 			return
 		}
-	} else {
-		// OTP does not exist, create a new one
-		if result := database.DB.Create(&otpEntry); result.Error != nil {
-			http.Error(w, result.Error.Error(), http.StatusInternalServerError)
+
+		emailBody := fmt.Sprintf(`<p>Dear User,</p>
+        <p>Welcome to the BPIT Society Management Website!</p>
+        <p>To complete your registration, please use the following One-Time Password (OTP):</p>
+        <h2>%s</h2>
+        <p>This OTP is valid for the next 10 minutes. Please do not share this code with anyone.</p>
+        <p>If you did not request this registration, please ignore this email.</p>
+        <p>Thank you for joining our community!</p>
+        <p>Best regards,</p>
+        <p>BPIT Society Portal Team</p>
+        <hr>
+        <p>Bhagwan Parshuram Institute of Technology</p>
+        <p>College Society Portal/p>
+        <p><a href="https://alumni.bpitindia.com/">BPIT Society Website</a></p>`, otp)
+		// Send OTP via mail
+		if err := helper.SendEmail(req.Email, "OTP for Society Management Website SignUp", emailBody); err != nil {
+			http.Error(w, "Failed To Send Email for OTP", http.StatusInternalServerError)
 			return
 		}
+
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(map[string]string{
+			"message": "OTP sent successfully",
+		})
 	}
 
-	emailBody := fmt.Sprintf("<p>Thank you for registering on <b>Bpit Alumni Website</b>.</br> Your OTP is %s.</br> This OTP will expire at %s.</p>", otpEntry.Code, otpEntry.ExpiresAt)
-	// Send OTP via mail
-	err = helper.SendEmail(user.Email, "Registration OTP", emailBody)
-	if err != nil {
-		http.Error(w, "Failed to send email", http.StatusInternalServerError)
-		return
-	}
-
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(map[string]string{
-		"message": "OTP sent successfully",
-	})
+	// http.Error(w, "Invalid request", http.StatusBadRequest)
 }

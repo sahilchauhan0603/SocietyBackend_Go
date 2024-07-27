@@ -119,7 +119,7 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(map[string]string{"message": "Role successfully deleted"})
+	json.NewEncoder(w).Encode(map[string]string{"message": "User successfully deleted"})
 }
 
 func DeleteTableHandler(w http.ResponseWriter, r *http.Request) {
