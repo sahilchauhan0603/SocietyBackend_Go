@@ -22,7 +22,8 @@ type SocietyUser struct {
 	BatchYear    string
 	Email        string `gorm:"not null;unique"`
 	EnrollmentNo string `gorm:"not null;unique"`
-	isApproved   bool
+	Verified     bool   `gorm:"default:false"`
+	OTP          string
 }
 
 type SocietyProfile struct {
@@ -36,7 +37,7 @@ type SocietyProfile struct {
 	SocietyHeadMobile   string
 	SocietyEmail        string
 	SocietyWebsite      string
-	isApproved          bool
+	isApproved          bool                 `gorm:"default:false"`
 	Testimonials        []SocietyTestimonial `gorm:"foreignKey:SocietyID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	SocietyCoordinator  []SocietyCoordinator `gorm:"foreignKey:SocietyID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	Events              []SocietyEvent       `gorm:"foreignKey:SocietyID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
@@ -66,7 +67,7 @@ type StudentProfile struct {
 	GithubProfile        *string
 	LinkedInProfile      *string
 	TwitterProfile       *string
-	isApproved           bool
+	isApproved           bool                 `gorm:"default:false"`
 	StudentAchievements  []StudentAchievement `gorm:"foreignKey:EnrollmentNo;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	Testimonials         []SocietyTestimonial `gorm:"foreignKey:EnrollmentNo;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	StudentMarking       []StudentMarking     `gorm:"foreignKey:EnrollmentNo;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
@@ -136,9 +137,9 @@ type SocietyNews struct {
 	Author      string
 }
 
-type SocietyOTP struct {
-	OtpID     int64     `gorm:"primaryKey;autoIncrement"`
-	Email     string    `gorm:"not null;unique"`
-	Code      string    `gorm:"not null"`
-	ExpiresAt time.Time `gorm:"not null"`
-}
+// type SocietyOTP struct {
+// 	OtpID     int64     `gorm:"primaryKey;autoIncrement"`
+// 	Email     string    `gorm:"not null;unique"`
+// 	Code      string    `gorm:"not null"`
+// 	ExpiresAt time.Time `gorm:"not null"`
+// }

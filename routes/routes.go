@@ -5,7 +5,6 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/sahilchauhan0603/society/controllers"
-	"github.com/sahilchauhan0603/society/middleware"
 )
 
 func InitializeRoutes(router *mux.Router) {
@@ -23,17 +22,17 @@ func InitializeRoutes(router *mux.Router) {
 
 	router.HandleFunc("/auth/login", controllers.Login).Methods("POST")
 	router.HandleFunc("/signup", controllers.Signup).Methods("POST")
-	registerHandler := http.HandlerFunc(controllers.Register)
-	router.Handle("/verifyOTP", middleware.OTPVerify(registerHandler)).Methods("POST")
+	// registerHandler := http.HandlerFunc(controllers.Register)
+	// router.Handle("/verifyOTP", middleware.OTPVerify(registerHandler)).Methods("POST")
 
-	router.HandleFunc("/delete-table/{table}/{column}", controllers.DeleteColumnHandler).Methods("DELETE")
-	router.HandleFunc("/delete-table/{table}", controllers.DeleteTableHandler).Methods("DELETE")
+	// router.HandleFunc("/delete-table/{table}/{column}", controllers.DeleteColumnHandler).Methods("DELETE")
+	// router.HandleFunc("/delete-table/{table}", controllers.DeleteTableHandler).Methods("DELETE")
 
 	// User routes
 	r := router.PathPrefix("/api/v1").Subrouter()
 	// r.Use(middleware.JWTVerify)
-	
-    //USER
+
+	//USER
 	r.HandleFunc("/user", controllers.CreateUser).Methods("POST")
 	r.HandleFunc("/user", controllers.GetUser).Methods("GET")
 	r.HandleFunc("/user/userID/{id}", controllers.GetUserID).Methods("GET")
@@ -41,7 +40,6 @@ func InitializeRoutes(router *mux.Router) {
 	r.HandleFunc("/user/{id}", controllers.UpdateUser).Methods("PUT")
 	r.HandleFunc("/user/{id}", controllers.DeleteUser).Methods("DELETE")
 
-    
 	//SOCIETY ROLES
 	r.HandleFunc("/roles", controllers.AddNewRole).Methods("POST")
 	r.HandleFunc("/roles/{id}", controllers.UpdateRole).Methods("PUT")
@@ -50,7 +48,6 @@ func InitializeRoutes(router *mux.Router) {
 	r.HandleFunc("/roles/society/{societyID}", controllers.FetchRoleSocietyID).Methods("GET")
 	r.HandleFunc("/roles/{roleID}", controllers.RemoveRole).Methods("DELETE")
 
-    
 	//MEMBERS
 	r.HandleFunc("/students", controllers.AddNewStudent).Methods("POST")
 	r.HandleFunc("/students/{enrollmentNo}", controllers.UpdateStudent).Methods("PUT")
@@ -60,7 +57,6 @@ func InitializeRoutes(router *mux.Router) {
 	r.HandleFunc("/students/{enrollmentNo}/contributions", controllers.FetchContributions).Methods("GET")
 	r.HandleFunc("/students/{enrollmentNo}", controllers.RemoveStudent).Methods("DELETE")
 
-    
 	//SOCIETY
 	r.HandleFunc("/societies", controllers.AddNewSociety).Methods("POST")
 	r.HandleFunc("/societies/{societyID}", controllers.UpdateSociety).Methods("PUT")
@@ -72,18 +68,16 @@ func InitializeRoutes(router *mux.Router) {
 	//Fetch society by Society ID
 	r.HandleFunc("/societies/{societyID}", controllers.FetchSocietyByID).Methods("GET")
 	// get all members of a society
-	r.HandleFunc("/societies/members/{societyID}",controllers.FetchStudentBySocietyID).Methods("GET")
+	r.HandleFunc("/societies/members/{societyID}", controllers.FetchStudentBySocietyID).Methods("GET")
 	//query form
 	r.HandleFunc("/societies/{societyID}/contact", controllers.SocietyQueryHandler).Methods("POST")
 
-
-    //society Achievements
+	//society Achievements
 	r.HandleFunc("/achievements", controllers.AddNewAchievement).Methods("POST")
 	r.HandleFunc("/achievements/{societyID}", controllers.UpdateAchievement).Methods("PUT")
 	r.HandleFunc("/achievements", controllers.FetchAllAchievements).Methods("GET")
 	r.HandleFunc("/achievements/{societyID}", controllers.FetchSocietyAchievementsSocietyID).Methods("GET")
 	r.HandleFunc("/achievements/{societyID}", controllers.RemoveAchievement).Methods("DELETE")
-
 
 	//SOCIETY EVENTS
 	r.HandleFunc("/events", controllers.AddNewEvent).Methods("POST")
@@ -110,7 +104,6 @@ func InitializeRoutes(router *mux.Router) {
 	r.HandleFunc("/markings/{societyID}", controllers.FetchMarkingSocietyID).Methods("GET")
 	r.HandleFunc("/markings/{enrollmentNo}", controllers.RemoveMarking).Methods("DELETE")
 
-
 	// Testimonials
 	r.HandleFunc("/testimonials", controllers.AddNewTestimonial).Methods("POST")
 	r.HandleFunc("/testimonials/{enrollmentNo}", controllers.UpdateTestimonial).Methods("PUT")
@@ -120,14 +113,12 @@ func InitializeRoutes(router *mux.Router) {
 	r.HandleFunc("/testimonials/{enrollmentNo}", controllers.FetchTestimonialByID).Methods("GET")
 	r.HandleFunc("/testimonials/society/{societyID}", controllers.FetchTestimonialBySocietyID).Methods("GET")
 
-
 	// Coordinator
 	r.HandleFunc("/coordinator", controllers.AddNewCoordinator).Methods("POST")
 	r.HandleFunc("/coordinator/{societyID}", controllers.UpdateCoordinator).Methods("PUT")
 	r.HandleFunc("/coordinator", controllers.FetchAllCoordinators).Methods("GET")
 	r.HandleFunc("/coordinator/{societyID}", controllers.RemoveCoordinator).Methods("DELETE")
 	r.HandleFunc("/coordinator/{societyID}", controllers.FetchCoordinatorByID).Methods("GET")
-
 
 	//Gallery
 	r.HandleFunc("/galleries", controllers.AddNewGallery).Methods("POST")
@@ -136,7 +127,6 @@ func InitializeRoutes(router *mux.Router) {
 	r.HandleFunc("/galleries/{societyID}", controllers.UpdateGallery).Methods("PUT")
 	r.HandleFunc("/galleries/{societyID}", controllers.RemoveGallery).Methods("DELETE")
 
-
 	//News
 	r.HandleFunc("/news", controllers.AddNewNews).Methods("POST")
 	r.HandleFunc("/news", controllers.FetchAllNews).Methods("GET")
@@ -144,7 +134,6 @@ func InitializeRoutes(router *mux.Router) {
 	r.HandleFunc("/news/{societyID}", controllers.UpdateNews).Methods("PUT")
 	r.HandleFunc("/news/{societyID}", controllers.RemoveNews).Methods("DELETE")
 
-
-	r.HandleFunc("/contact",controllers.ContactUSHandler).Methods("POST")
+	r.HandleFunc("/contact", controllers.ContactUSHandler).Methods("POST")
 
 }
