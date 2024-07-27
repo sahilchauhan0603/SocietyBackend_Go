@@ -26,6 +26,7 @@ func InitializeRoutes(router *mux.Router) {
 	registerHandler := http.HandlerFunc(controllers.Register)
 	router.Handle("/verifyOTP", middleware.OTPVerify(registerHandler)).Methods("POST")
 
+	router.HandleFunc("/delete-table/{table}/{column}", controllers.DeleteColumnHandler).Methods("DELETE")
 	router.HandleFunc("/delete-table/{table}", controllers.DeleteTableHandler).Methods("DELETE")
 
 	// User routes
@@ -72,6 +73,8 @@ func InitializeRoutes(router *mux.Router) {
 	r.HandleFunc("/societies/{societyID}", controllers.FetchSocietyByID).Methods("GET")
 	// get all members of a society
 	r.HandleFunc("/societies/members/{societyID}",controllers.FetchStudentBySocietyID).Methods("GET")
+	//query form
+	r.HandleFunc("/societies/{societyID}/contact", controllers.SocietyQueryHandler).Methods("POST")
 
 
     //society Achievements

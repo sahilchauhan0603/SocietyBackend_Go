@@ -10,25 +10,26 @@ import (
 	"github.com/sahilchauhan0603/society/helper"
 )
 
-type RegisterEvent struct {
-	FullName     string
-	Email        string
+type SocietyQuery struct {
+	StudentName  string
+	Society      string
 	Batch        string
 	Branch       string
 	EnrollmentNo int64
+	Query        string
 }
 
-func RegisterEventHandler(w http.ResponseWriter, r *http.Request) {
+func SocietyQueryHandler(w http.ResponseWriter, r *http.Request) {
 
 	emailUser := os.Getenv("EMAIL_USER")
 
-	var formdata RegisterEvent
+	var formdata SocietyQuery
 	if err := json.NewDecoder(r.Body).Decode(&formdata); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	emailBody := fmt.Sprintf("<p> FullName : %s </p> <p>Email: %s</p> <p>Batch: %s</p> <p>Branch: %s</p> <p>EnrollmentNo : %d</p>", formdata.FullName, formdata.Email, formdata.Batch, formdata.Branch, formdata.EnrollmentNo)
-	err := helper.SendEmail(emailUser, "EVENT REGISTER FORM", emailBody)
+	emailBody := fmt.Sprintf("<p> StudentName : %s </p> <p>Society: %s</p> <p>Batch: %s</p> <p>Branch: %s</p> <p>EnrollmentNo : %d</p> <p>Query : %s</p>", formdata.StudentName, formdata.Society, formdata.Batch, formdata.Branch, formdata.EnrollmentNo, formdata.Query)
+	err := helper.SendEmail(emailUser, "SOCIETY QUERY FORM", emailBody)
 	if err != nil {
 		log.Printf("Error sending email: %v\n", err)
 		http.Error(w, "Failed to send email", http.StatusInternalServerError)

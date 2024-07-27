@@ -134,3 +134,17 @@ func DeleteTableHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	fmt.Fprintf(w, "table dropped successfully")
 }
+
+func DeleteColumnHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	tableName := vars["table"]
+	columnName := vars["column"]
+
+	if err := database.DB.Migrator().DropColumn(tableName,columnName); err != nil {
+		http.Error(w, fmt.Sprintf("failed to drop column: %v", err), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprintf(w, "column dropped successfully")
+}

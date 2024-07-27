@@ -44,7 +44,7 @@ func DatabaseConnector() {
 	if err != nil {
 		log.Fatal("failed to connect database: ", err)
 	}
-
+	
 	//Migrate the schema
 	if err := DB.AutoMigrate(
 		&models.SocietyProfile{},

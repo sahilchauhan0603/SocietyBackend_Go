@@ -59,7 +59,7 @@ func UpdateStudent(w http.ResponseWriter, r *http.Request) {
 }
 func FetchAllStudents(w http.ResponseWriter, r *http.Request) {
 	var students []models.StudentProfile
-	if err := database.DB.Preload("StudentAchievements").Order("user_id ASC").Find(&students).Error; err != nil {
+	if err := database.DB.Preload("StudentAchievements").Order("society_id ASC").Find(&students).Error; err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
