@@ -5,7 +5,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/sahilchauhan0603/society/controllers"
-	// "github.com/sahilchauhan0603/society/middleware"
+	"github.com/sahilchauhan0603/society/middleware"
 )
 
 func InitializeRoutes(router *mux.Router) {
@@ -20,6 +20,11 @@ func InitializeRoutes(router *mux.Router) {
 
 	router.HandleFunc("/login", controllers.HandleMicrosoftLogin).Methods("GET")
 	router.HandleFunc("/callback", controllers.HandleMicrosoftCallback).Methods("GET")
+
+	router.HandleFunc("/auth/login", controllers.Login).Methods("POST")
+	router.HandleFunc("/signup", controllers.Signup).Methods("POST")
+	registerHandler := http.HandlerFunc(controllers.Register)
+	router.Handle("/verifyOTP", middleware.OTPVerify(registerHandler)).Methods("POST")
 
 	// User routes
 	r := router.PathPrefix("/api/v1").Subrouter()
