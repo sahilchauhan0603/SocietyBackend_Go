@@ -10,7 +10,7 @@ type SocietyRole struct {
 	LastDateToApply  string
 	Responsibilities string
 	LinkBySociety    string
-	SocietyID        int64         `gorm:"not null;index"`
+	SocietyID        int64 `gorm:"not null;index"`
 }
 
 type SocietyUser struct {
@@ -22,6 +22,7 @@ type SocietyUser struct {
 	BatchYear    string
 	Email        string `gorm:"not null;unique"`
 	EnrollmentNo string `gorm:"not null;unique"`
+	isApproved   bool
 }
 
 type SocietyProfile struct {
@@ -32,6 +33,10 @@ type SocietyProfile struct {
 	DateOfRegistration  time.Time
 	SocietyDescription  string
 	SImage              string
+	SocietyHeadMobile   string
+	SocietyEmail        string
+	SocietyWebsite      string
+	isApproved          bool
 	Testimonials        []SocietyTestimonial `gorm:"foreignKey:SocietyID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	SocietyCoordinator  []SocietyCoordinator `gorm:"foreignKey:SocietyID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	Events              []SocietyEvent       `gorm:"foreignKey:SocietyID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
@@ -61,6 +66,7 @@ type StudentProfile struct {
 	GithubProfile        *string
 	LinkedInProfile      *string
 	TwitterProfile       *string
+	isApproved           bool
 	StudentAchievements  []StudentAchievement `gorm:"foreignKey:EnrollmentNo;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	Testimonials         []SocietyTestimonial `gorm:"foreignKey:EnrollmentNo;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	StudentMarking       []StudentMarking     `gorm:"foreignKey:EnrollmentNo;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`

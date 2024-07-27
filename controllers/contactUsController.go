@@ -30,7 +30,7 @@ func ContactUSHandler(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	emailBody := fmt.Sprintf("<p> Name : %s </p> </br> <p>Email: %s</p> <p>ContactNo: %s</p> <p>Batch: %s</p> <p>Branch: %s</p> <p>Society : %s</p> <p>Subject: %s</p> <p>Message: %s</p>", formdata.Name, formdata.Email, formdata.ContactNo, formdata.Batch, formdata.Branch, formdata.Society, formdata.Subject, formdata.Message)
+	emailBody := fmt.Sprintf("<p> Name : %s </p> <p>Email: %s</p> <p>ContactNo: %s</p> <p>Batch: %s</p> <p>Branch: %s</p> <p>Society : %s</p> <p>Subject: %s</p> <p>Message: %s</p>", formdata.Name, formdata.Email, formdata.ContactNo, formdata.Batch, formdata.Branch, formdata.Society, formdata.Subject, formdata.Message)
 	err := helper.SendEmail(emailUser, "CONTACT FORM", emailBody)
 	if err != nil {
 		log.Printf("Error sending email: %v\n", err)
