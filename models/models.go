@@ -21,7 +21,7 @@ type SocietyUser struct {
 	Branch       string
 	BatchYear    string
 	Email        string `gorm:"not null;unique"`
-	EnrollmentNo string //`gorm:"not null;unique"`
+	EnrollmentNo string `gorm:"not null;unique"`
 }
 
 type SocietyProfile struct {
