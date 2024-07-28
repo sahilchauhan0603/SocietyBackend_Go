@@ -24,6 +24,7 @@ type SocietyUser struct {
 	EnrollmentNo string `gorm:"not null;unique"`
 	Verified     bool   `gorm:"default:false"`
 	OTP          string
+	ExpiresAt    time.Time
 }
 
 type SocietyProfile struct {
