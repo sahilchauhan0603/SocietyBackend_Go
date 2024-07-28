@@ -17,10 +17,10 @@ func InitializeRoutes(router *mux.Router) {
 		w.WriteHeader(http.StatusNoContent)
 	})
 
-	router.HandleFunc("/login", controllers.HandleMicrosoftLogin).Methods("GET")
+	router.HandleFunc("/microsoftLogin", controllers.HandleMicrosoftLogin).Methods("GET")
 	router.HandleFunc("/callback", controllers.HandleMicrosoftCallback).Methods("GET")
 
-	router.HandleFunc("/auth/login", controllers.Login).Methods("POST")
+	router.HandleFunc("/login", controllers.Login).Methods("POST")
 	router.HandleFunc("/signup", controllers.Signup).Methods("POST")
 	// registerHandler := http.HandlerFunc(controllers.Register)
 	// router.Handle("/verifyOTP", middleware.OTPVerify(registerHandler)).Methods("POST")
