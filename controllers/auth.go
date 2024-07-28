@@ -104,38 +104,6 @@ func exchangeCodeForToken(authCode string) (map[string]interface{}, error) {
 	return result, nil
 }
 
-// Register handles user registration
-func Register(w http.ResponseWriter, r *http.Request) {
-	var user models.SocietyUser
-	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	// Ensure that the password is not empty
-	if user.Password == "" {
-		http.Error(w, "Password cannot be empty", http.StatusBadRequest)
-		return
-	}
-
-	// Hash the password before saving it to the database
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	user.Password = string(hashedPassword)
-
-	// Store the alumni profile in the database
-	if result := database.DB.Create(&user); result.Error != nil {
-		http.Error(w, result.Error.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(user)
-}
-
 // Login handles user login and JWT generation
 func Login(w http.ResponseWriter, r *http.Request) {
 	var credentials struct {
@@ -153,11 +121,11 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// // Compare the stored hashed password with the provided password
-	// if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(credentials.Password)); err != nil {
-	// 	http.Error(w, "Invalid email or password !!", http.StatusUnauthorized)
-	// 	return
-	// }
+	// Compare the stored hashed password with the provided password
+	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(credentials.Password)); err != nil {
+		http.Error(w, "Invalid email or password !!", http.StatusUnauthorized)
+		return
+	}
 
 	// Create a JWT token
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
@@ -216,7 +184,12 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 		}
 		if req.OTP != "" {
 			if req.OTP == user.OTP {
+				if time.Now().After(user.ExpiresAt) {
+					http.Error(w, "OTP expired", http.StatusBadRequest)
+					return
+				}
 				user.Verified = true
+				user.OTP = ""
 				database.DB.Save(&user)
 				w.WriteHeader(http.StatusOK)
 				json.NewEncoder(w).Encode(map[string]string{"message": "User verified successfully"})
@@ -229,6 +202,11 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if req.OTP == "" {
+		// Ensure that the password is not empty
+		if req.Password == "" {
+			http.Error(w, "Password cannot be empty", http.StatusBadRequest)
+			return
+		}
 		otp, err := helper.GenerateOTP(6)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -237,15 +215,21 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 		newUser := models.SocietyUser{
 			FirstName:    req.FirstName,
 			LastName:     req.LastName,
-			Password:     req.Password,
 			Branch:       req.Branch,
 			BatchYear:    req.BatchYear,
 			Email:        req.Email,
 			EnrollmentNo: req.EnrollmentNo,
 			Verified:     false,
 			OTP:          otp,
+			ExpiresAt:    time.Now().Add(5 * time.Minute),
 		}
-
+		// Hash the password before saving it to the database
+		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		newUser.Password = string(hashedPassword)
 		if err := database.DB.Create(&newUser).Error; err != nil {
 			http.Error(w, fmt.Sprintf("Failed to create user: %v", err), http.StatusInternalServerError)
 			return
