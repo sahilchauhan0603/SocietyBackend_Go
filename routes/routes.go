@@ -22,6 +22,8 @@ func InitializeRoutes(router *mux.Router) {
 
 	router.HandleFunc("/login", controllers.Login).Methods("POST")
 	router.HandleFunc("/signup", controllers.Signup).Methods("POST")
+	router.HandleFunc("/forgotPassword", controllers.SendEmail).Methods("POST")
+	router.HandleFunc("/resetPassword", controllers.VerifyReset).Methods("POST")
 	// registerHandler := http.HandlerFunc(controllers.Register)
 	// router.Handle("/verifyOTP", middleware.OTPVerify(registerHandler)).Methods("POST")
 
