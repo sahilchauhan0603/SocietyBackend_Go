@@ -145,3 +145,9 @@ type SocietyNews struct {
 // 	Code      string    `gorm:"not null"`
 // 	ExpiresAt time.Time `gorm:"not null"`
 // }
+type SocietyResetPassword struct {
+	ResetID   int64     `gorm:"primaryKey;autoIncrement"`
+	Email     string    `gorm:"not null;unique"`
+	Code      string    `gorm:"not null"`
+	ExpiresAt time.Time `gorm:"not null"`
+}
