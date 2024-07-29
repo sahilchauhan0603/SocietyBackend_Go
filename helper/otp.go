@@ -17,18 +17,3 @@ func GenerateOTP(length int) (string, error) {
 	}
 	return string(otp), nil
 }
-
-// func VerifyOTP(email string, inputOTP string) error {
-// 	var otp models.SocietyOTP
-// 	if err := database.DB.Where("email = ? AND code = ?", email, inputOTP).First(&otp).Error; err != nil {
-// 		return errors.New("invalid OTP")
-// 	}
-
-// 	if time.Now().After(otp.ExpiresAt) {
-// 		database.DB.Delete(&otp)
-// 		return errors.New("OTP has expired")
-// 	}
-
-// 	database.DB.Delete(&otp)
-// 	return nil
-// }

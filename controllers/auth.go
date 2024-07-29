@@ -179,7 +179,7 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 	var user models.SocietyUser
 	if err := database.DB.Where("email = ?", req.Email).First(&user).Error; err == nil {
 		if user.Verified {
-			http.Error(w, "User already exists and is verified", http.StatusBadRequest)
+			http.Error(w, "User with this email already exists and is verified", http.StatusBadRequest)
 			return
 		}
 		if req.OTP != "" {
@@ -239,7 +239,7 @@ func Signup(w http.ResponseWriter, r *http.Request) {
         <p>Welcome to the BPIT Society Management Website!</p>
         <p>To complete your registration, please use the following One-Time Password (OTP):</p>
         <h2>%s</h2>
-        <p>This OTP is valid for the next 10 minutes. Please do not share this code with anyone.</p>
+        <p>This OTP is valid for the next 5 minutes. Please do not share this code with anyone.</p>
         <p>If you did not request this registration, please ignore this email.</p>
         <p>Thank you for joining our community!</p>
         <p>Best regards,</p>
@@ -259,6 +259,4 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 			"message": "OTP sent successfully",
 		})
 	}
-
-	// http.Error(w, "Invalid request", http.StatusBadRequest)
 }
