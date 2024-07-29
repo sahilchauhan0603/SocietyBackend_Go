@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"net/http"
 	"strconv"
-	"time"
 
 	"github.com/gorilla/mux"
 	database "github.com/sahilchauhan0603/society/config"
@@ -12,13 +11,13 @@ import (
 )
 
 type tempo struct {
-	SocietyID          uint
-	CoordinatorDetails string
-	SocietyType        string
-	SocietyName        string
-	SocietyHead        string
-	DateOfRegistration time.Time
-	SocietyDescription string
+	SocietyID              uint
+	CoordinatorName        string
+	CoordinatorDesignation string
+	CoordinatorEmail       string
+	CoordinatorDetails     string
+	SocietyName            string
+	Image                  string
 }
 
 func AddNewCoordinator(w http.ResponseWriter, r *http.Request) {
@@ -75,7 +74,7 @@ func FetchAllCoordinators(w http.ResponseWriter, r *http.Request) {
 
 	var data []tempo
 	if err := database.DB.Table("society_coordinators").
-		Select("society_coordinators.society_id, society_coordinators.coordinator_details, society_profiles.society_type, society_profiles.society_name, society_profiles.society_head, society_profiles.date_of_registration, society_profiles.society_description").
+		Select("society_coordinators.society_id, society_coordinators.coordinator_details, society_coordinators.coordinator_name, society_coordinators.coordinator_email, society_coordinators.coordinator_designation, society_coordinators.image, society_profiles.society_name").
 		Joins("JOIN society_profiles ON society_profiles.society_id = society_coordinators.society_id").
 		Scan(&data).Error; err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -93,7 +92,7 @@ func FetchCoordinatorByID(w http.ResponseWriter, r *http.Request) {
 
 	var info []tempo
 	if err := database.DB.Table("society_coordinators").
-	    Select("society_coordinators.society_id, society_coordinators.coordinator_details, society_profiles.society_type, society_profiles.society_name, society_profiles.society_head, society_profiles.date_of_registration, society_profiles.society_description").
+	    Select("society_coordinators.society_id, society_coordinators.coordinator_details, society_coordinators.coordinator_name, society_coordinators.coordinator_email, society_coordinators.coordinator_designation, society_coordinators.image, society_profiles.society_name").
 		Joins("JOIN society_profiles ON society_profiles.society_id = society_coordinators.society_id").Where("society_coordinators.society_id = ?", societyID).
 		Scan(&info).Error; err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

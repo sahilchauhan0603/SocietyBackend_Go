@@ -95,7 +95,7 @@ func SendEmail(w http.ResponseWriter, r *http.Request) {
 	emailBody := fmt.Sprintf(`
     <p>Dear User,</p>
 
-    <p>We received a request to reset your password for your BPIT Alumni Website account.</p>
+    <p>We received a request to reset your password for your BPIT Society Management Website account.</p>
 
     <p>Please click the link below to Change your password:</p>
 

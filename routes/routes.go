@@ -137,5 +137,13 @@ func InitializeRoutes(router *mux.Router) {
 	r.HandleFunc("/news/{societyID}", controllers.RemoveNews).Methods("DELETE")
 
 	r.HandleFunc("/contact", controllers.ContactUSHandler).Methods("POST")
+	r.HandleFunc("/feedback", controllers.FeedbackHandler).Methods("POST")
+
+	// AdminRole routes
+    r.HandleFunc("/adminrole", controllers.AddNewAdminRole).Methods("POST")
+    r.HandleFunc("/adminroles", controllers.FetchAllAdminRoles).Methods("GET")
+    r.HandleFunc("/adminrole/{username}", controllers.FetchAdminRole).Methods("GET")
+    r.HandleFunc("/adminrole/{username}", controllers.UpdateAdminRole).Methods("PUT")
+    r.HandleFunc("/adminrole/{username}", controllers.RemoveAdminRole).Methods("DELETE")
 
 }

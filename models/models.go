@@ -119,9 +119,13 @@ type SocietyTestimonial struct {
 }
 
 type SocietyCoordinator struct {
-	SocietyID          uint `gorm:"not null;index"`
-	CoordinatorID      uint `gorm:"primaryKey;autoIncrement:false"`
-	CoordinatorDetails string
+	SocietyID              uint `gorm:"not null;index"`
+	CoordinatorID          uint `gorm:"primaryKey;autoIncrement:false"`
+	CoordinatorName        string
+	CoordinatorDesignation string
+	CoordinatorEmail       string
+	CoordinatorDetails     string
+	Image                  string
 }
 
 type SocietyGallery struct {
@@ -145,9 +149,16 @@ type SocietyNews struct {
 // 	Code      string    `gorm:"not null"`
 // 	ExpiresAt time.Time `gorm:"not null"`
 // }
+
 type SocietyResetPassword struct {
 	ResetID   int64     `gorm:"primaryKey;autoIncrement"`
 	Email     string    `gorm:"not null;unique"`
 	Code      string    `gorm:"not null"`
 	ExpiresAt time.Time `gorm:"not null"`
+}
+
+type AdminPanelRole struct {
+	Username string `gorm:"primaryKey;autoIncrement"`
+	Password string `gorm:"not null;unique"`
+	Role     string
 }

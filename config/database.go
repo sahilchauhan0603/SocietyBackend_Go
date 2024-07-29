@@ -59,6 +59,7 @@ func DatabaseConnector() {
 		&models.SocietyCoordinator{},
 		&models.SocietyGallery{},
 		&models.SocietyNews{},
+		&models.AdminPanelRole{},
 	); err != nil {
 		log.Fatal(err)
 	}
