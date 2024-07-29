@@ -65,6 +65,7 @@ type StudentProfile struct {
 	SocietyPosition      string
 	StudentContributions string
 	DomainExpertise      string
+	MemberType           string
 	GithubProfile        *string
 	LinkedInProfile      *string
 	TwitterProfile       *string
