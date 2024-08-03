@@ -4,11 +4,20 @@ import (
 	"encoding/json"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/gorilla/mux"
 	database "github.com/sahilchauhan0603/society/config"
 	"github.com/sahilchauhan0603/society/models"
 )
+
+type tempoAdminEvents struct {
+	EventID       uint
+	Title         string
+	Description   string
+	EventDateTime time.Time
+	SocietyName   string
+}
 
 func AddNewEvent(w http.ResponseWriter, r *http.Request) {
 	var event models.SocietyEvent
@@ -135,4 +144,39 @@ func RemoveEventsBySocietyID(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(map[string]string{"message": "Events successfully deleted"})
+}
+
+// ADMIN PANEL
+func FetchAllAdminEvents(w http.ResponseWriter, r *http.Request) {
+
+	var data []tempoAdminEvents
+	if err := database.DB.Table("society_events").
+		Select("society_events.event_id, society_events.title, society_events.description, society_events.event_date_time, society_profiles.society_name").
+		Joins("JOIN society_profiles ON society_profiles.society_id = society_events.society_id").
+		Scan(&data).Error; err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(data)
+}
+
+func FetchAllAdminEventsSociety(w http.ResponseWriter, r *http.Request) {
+
+	vars := mux.Vars(r)
+	societyID := vars["societyID"]
+
+	var data []tempoAdminEvents
+	if err := database.DB.Table("society_events").
+		Select("society_events.event_id, society_events.title, society_events.description, society_events.event_date_time, society_profiles.society_name").
+		Joins("JOIN society_profiles ON society_profiles.society_id = society_events.society_id").
+		Where("society_events.society_id = ?", societyID).
+		Scan(&data).Error; err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(data)
 }

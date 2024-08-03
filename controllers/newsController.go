@@ -20,6 +20,19 @@ type tempNews struct {
 	DateOfNews  time.Time
 	Author      string
 }
+type tempAdminNews struct {
+	DateOfNews time.Time
+	Author     string
+	Title      string
+}
+
+type tempNewsSocietyAdmin struct {
+	SocietyID   uint
+	Description string
+	DateOfNews  time.Time
+	SocietyName string
+	Author      string
+}
 
 func AddNewNews(w http.ResponseWriter, r *http.Request) {
 
@@ -51,9 +64,9 @@ func FetchAllNews(w http.ResponseWriter, r *http.Request) {
 
 	var newsList []tempNews
 	if result := database.DB.Table("society_news").
-	Select("society_news.*,society_profiles.society_name").
-	Joins("JOIN society_profiles ON society_profiles.society_id = society_news.society_id").
-	Scan(&newsList); result.Error != nil {
+		Select("society_news.*,society_profiles.society_name").
+		Joins("JOIN society_profiles ON society_profiles.society_id = society_news.society_id").
+		Scan(&newsList); result.Error != nil {
 		http.Error(w, result.Error.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -128,4 +141,60 @@ func RemoveNews(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(map[string]string{"message": "News successfully deleted"})
+}
+
+// ADMIN PANEL
+func FetchAllNewsAdminHome(w http.ResponseWriter, r *http.Request) {
+
+	var newsList []tempAdminNews
+	if result := database.DB.Table("society_news").
+		Select("society_news.date_of_news, society_news.author, society_news.title").
+		Joins("JOIN society_profiles ON society_profiles.society_id = society_news.society_id").
+		Scan(&newsList); result.Error != nil {
+		http.Error(w, result.Error.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(newsList)
+}
+
+func FetchAllNewsAdminNews(w http.ResponseWriter, r *http.Request) {
+
+	var info []tempNewsSocietyAdmin
+	if err := database.DB.Table("society_news").
+		Select("society_news.society_id, society_news.description, society_news.date_of_news, society_news.author ,society_profiles.society_name").
+		Joins("JOIN society_profiles ON society_profiles.society_id = society_news.society_id").
+		Scan(&info).Error; err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(info)
+}
+
+func FetchNewsAdminNews(w http.ResponseWriter, r *http.Request) {
+
+	vars := mux.Vars(r)
+	societyID, err := strconv.Atoi(vars["society_id"])
+	if err != nil {
+		http.Error(w, "Invalid Society ID", http.StatusBadRequest)
+		return
+	}
+
+	var info []tempNewsSocietyAdmin
+	if err := database.DB.Table("society_news").
+		Select("society_news.society_id, society_news.description, society_news.date_of_news, society_news.author ,society_profiles.society_name").
+		Joins("JOIN society_profiles ON society_profiles.society_id = society_news.society_id").Where("society_news.society_id = ?", societyID).
+		Scan(&info).Error; err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(info)
 }
