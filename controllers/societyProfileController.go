@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/gorilla/mux"
 	database "github.com/sahilchauhan0603/society/config"
@@ -96,23 +97,6 @@ func FetchSocietyByCoordinator(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(society)
 }
 
-// func FetchSocietyByID(w http.ResponseWriter, r *http.Request) {
-// 	vars := mux.Vars(r)
-// 	societyID, err := strconv.Atoi(vars["societyID"])
-// 	if err != nil {
-// 		http.Error(w, err.Error(), http.StatusBadRequest)
-// 		return
-// 	}
-
-// 	var society models.SocietyProfile
-// 	if err := database.DB.Where("society_id = ?", societyID).First(&society).Error; err != nil {
-// 		http.Error(w, err.Error(), http.StatusNotFound)
-// 		return
-// 	}
-
-//		w.Header().Set("Content-Type", "application/json")
-//		json.NewEncoder(w).Encode(society)
-//	}
 func RemoveSocietyByID(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	societyID, err := strconv.Atoi(vars["societyID"])
@@ -168,4 +152,59 @@ func FetchSocietyByID(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(societyProfile)
+}
+
+// ADMIN PANEL
+func FetchAllSocietiesAdmin(w http.ResponseWriter, r *http.Request) {
+
+	var societies []struct {
+		SocietyID          uint
+		SocietyName        string
+		DateOfRegistration time.Time
+		SocietyDescription string
+		SocietyHead        string
+		SocietyType        string
+	}
+
+	if err := database.DB.Model(&models.SocietyProfile{}).
+		Select("society_id, society_name, date_of_registration, society_description, society_head, society_type").
+		Order("society_id ASC").
+		Find(&societies).Error; err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(societies)
+}
+
+func FetchSocietyAdmin(w http.ResponseWriter, r *http.Request) {
+    
+	params := mux.Vars(r)
+	societyID, err := strconv.Atoi(params["societyID"])
+	if err != nil {
+		http.Error(w, "Invalid ID", http.StatusBadRequest)
+		return
+	}
+	
+	var societies []struct {
+		SocietyID          uint
+		SocietyName        string
+		DateOfRegistration time.Time
+		SocietyDescription string
+		SocietyHead        string
+		SocietyType        string
+	}
+
+	if err := database.DB.Model(&models.SocietyProfile{}).
+		Select("society_id, society_name, date_of_registration, society_description, society_head, society_type").
+		Where("society_profiles.society_id = ?", societyID).
+		Order("society_id ASC").
+		Find(&societies).Error; err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(societies)
 }

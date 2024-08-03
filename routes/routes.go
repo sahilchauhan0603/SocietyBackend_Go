@@ -146,4 +146,25 @@ func InitializeRoutes(router *mux.Router) {
     r.HandleFunc("/adminrole/{username}", controllers.UpdateAdminRole).Methods("PUT")
     r.HandleFunc("/adminrole/{username}", controllers.RemoveAdminRole).Methods("DELETE")
 
+
+	//ADMIN PANEL ROUTES
+    r.HandleFunc("/admin/home/news", controllers.FetchAllNewsAdminHome).Methods("GET")
+
+    r.HandleFunc("/admin/news/{society_id}", controllers.FetchNewsAdminNews).Methods("GET")
+    r.HandleFunc("/admin/news", controllers.FetchAllNewsAdminNews).Methods("GET")
+
+    r.HandleFunc("/admin/members", controllers.FetchAllStudentsAdmin).Methods("GET")
+    r.HandleFunc("/admin/members/{societyID}", controllers.FetchStudentsSocietyAdmin).Methods("GET")
+
+	r.HandleFunc("/admin/coordinator", controllers.FetchAllCoordinatorsAdmin).Methods("GET")
+	r.HandleFunc("/admin/coordinator/{societyID}", controllers.FetchCoordinatorAdminByID).Methods("GET")
+
+	r.HandleFunc("/admin/events", controllers.FetchAllAdminEvents).Methods("GET")
+	r.HandleFunc("/admin/events/{societyID}", controllers.FetchAllAdminEventsSociety).Methods("GET")
+
+	r.HandleFunc("/admin/societies", controllers.FetchAllSocietiesAdmin).Methods("GET")
+	r.HandleFunc("/admin/societies/{societyID}", controllers.FetchSocietyAdmin).Methods("GET")
+    
+	r.HandleFunc("/admin/testimonials", controllers.FetchAllTestimonialsAdmin).Methods("GET")
+	r.HandleFunc("/admin/testimonials/{societyID}", controllers.FetchAllTestimonialsSocietyAdmin).Methods("GET")
 }

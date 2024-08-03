@@ -135,3 +135,58 @@ func FetchStudentBySocietyID(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(student)
 }
+
+// ADMIN PANEL
+func FetchAllStudentsAdmin(w http.ResponseWriter, r *http.Request) {
+    
+	var tempMembers []struct {
+		ProfilePicture string
+		FirstName      string
+		LastName       string
+		Branch         string
+		BatchYear      int
+		MobileNo       string
+		Email          string
+		StudentContributions string
+	}
+	if err := database.DB.Model(&models.StudentProfile{}).
+		Select("profile_picture, first_name, last_name, branch, batch_year, mobile_no, email, student_contributions").
+		Find(&tempMembers).Error; err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(tempMembers)
+}
+
+func FetchStudentsSocietyAdmin(w http.ResponseWriter, r *http.Request) {
+    
+	vars := mux.Vars(r)
+	societyID, err := strconv.ParseUint(vars["societyID"], 10, 64)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	
+	var tempMembers []struct {
+		ProfilePicture string
+		FirstName      string
+		LastName       string
+		Branch         string
+		BatchYear      int
+		MobileNo       string
+		Email          string
+		StudentContributions string
+	}
+	if err := database.DB.Model(&models.StudentProfile{}).
+		Select("profile_picture, first_name, last_name, branch, batch_year, mobile_no, email, student_contributions").
+		Where("society_id = ?", societyID).
+		Find(&tempMembers).Error; err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(tempMembers)
+}

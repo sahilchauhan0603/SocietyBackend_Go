@@ -20,6 +20,14 @@ type tempo struct {
 	Image                  string
 }
 
+type tempoAdmin struct {
+	CoordinatorID uint
+	CoordinatorName        string
+	CoordinatorDesignation string
+	CoordinatorDetails     string
+	SocietyID              uint
+}
+
 func AddNewCoordinator(w http.ResponseWriter, r *http.Request) {
 
 	var coordinator models.SocietyCoordinator
@@ -115,4 +123,39 @@ func RemoveCoordinator(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(map[string]string{"message": "Coordinator successfully deleted"})
+}
+
+
+//ADMIN PANEL
+func FetchAllCoordinatorsAdmin(w http.ResponseWriter, r *http.Request) {
+
+	var data []tempoAdmin
+	if err := database.DB.Table("society_coordinators").
+		Select("society_coordinators.coordinator_id, society_coordinators.society_id, society_coordinators.coordinator_details, society_coordinators.coordinator_name, society_coordinators.coordinator_designation").
+		Joins("JOIN society_profiles ON society_profiles.society_id = society_coordinators.society_id").
+		Scan(&data).Error; err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(data)
+}
+func FetchCoordinatorAdminByID(w http.ResponseWriter, r *http.Request) {
+
+	vars := mux.Vars(r)
+	societyID := vars["societyID"]
+
+	var info []tempoAdmin
+	if err := database.DB.Table("society_coordinators").
+	Select("society_coordinators.coordinator_id, society_coordinators.society_id, society_coordinators.coordinator_details, society_coordinators.coordinator_name, society_coordinators.coordinator_designation").
+		Joins("JOIN society_profiles ON society_profiles.society_id = society_coordinators.society_id").
+		Where("society_coordinators.society_id = ?", societyID).
+		Scan(&info).Error; err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(info)
 }

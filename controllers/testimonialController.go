@@ -22,6 +22,13 @@ type temp struct {
 	TestimonialDescription string
 }
 
+type tempAdmin struct {
+	ProfilePicture         string
+	FirstName              string
+	LastName               string
+	TestimonialDescription string
+}
+
 func AddNewTestimonial(w http.ResponseWriter, r *http.Request) {
 	var testimonial models.SocietyTestimonial
 	if err := json.NewDecoder(r.Body).Decode(&testimonial); err != nil {
@@ -145,4 +152,39 @@ func RemoveTestimonial(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(map[string]string{"message": "Testimonial successfully deleted"})
+}
+
+
+//ADMIN PANEL
+func FetchAllTestimonialsAdmin(w http.ResponseWriter, r *http.Request) {
+
+	var data []tempAdmin
+	if err := database.DB.Table("society_testimonials").
+	    Select("student_profiles.first_name, student_profiles.last_name, student_profiles.profile_picture, society_testimonials.testimonial_description").
+	    Joins("JOIN student_profiles ON student_profiles.enrollment_no = society_testimonials.enrollment_no").
+		Scan(&data).Error; err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(data)
+}
+func FetchAllTestimonialsSocietyAdmin(w http.ResponseWriter, r *http.Request) {
+    
+	vars := mux.Vars(r)
+	societyID := vars["societyID"]
+
+	var data []tempAdmin
+	if err := database.DB.Table("society_testimonials").
+	    Select("student_profiles.first_name, student_profiles.last_name, student_profiles.profile_picture, society_testimonials.testimonial_description").
+	    Joins("JOIN student_profiles ON student_profiles.enrollment_no = society_testimonials.enrollment_no").
+		Where("society_testimonials.society_id = ?", societyID).
+		Scan(&data).Error; err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(data)
 }
