@@ -55,7 +55,7 @@ func AddNewCoordinator(w http.ResponseWriter, r *http.Request) {
 func UpdateCoordinator(w http.ResponseWriter, r *http.Request) {
 
 	params := mux.Vars(r)
-	id, err := strconv.Atoi(params["societyID"])
+	id, err := strconv.Atoi(params["coordinatorID"])
 	if err != nil {
 		http.Error(w, "Invalid ID", http.StatusBadRequest)
 		return
@@ -71,7 +71,8 @@ func UpdateCoordinator(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-
+    
+	// coordinator.CoordinatorID = id // Ensure ID is not modified
 	database.DB.Save(&coordinator)
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)

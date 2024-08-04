@@ -117,7 +117,7 @@ func InitializeRoutes(router *mux.Router) {
 
 	// Coordinator
 	r.HandleFunc("/coordinator", controllers.AddNewCoordinator).Methods("POST")
-	r.HandleFunc("/coordinator/{societyID}", controllers.UpdateCoordinator).Methods("PUT")
+	r.HandleFunc("/coordinator/{coordinatorID}", controllers.UpdateCoordinator).Methods("PUT")
 	r.HandleFunc("/coordinator", controllers.FetchAllCoordinators).Methods("GET")
 	r.HandleFunc("/coordinator/{societyID}", controllers.RemoveCoordinator).Methods("DELETE")
 	r.HandleFunc("/coordinator/{societyID}", controllers.FetchCoordinatorByID).Methods("GET")
