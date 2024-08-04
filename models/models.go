@@ -85,7 +85,7 @@ type SocietyAchievement struct {
 
 type SocietyEvent struct {
 	SocietyID     uint `gorm:"not null;index"`
-	EventID       uint
+	EventID       uint `gorm:"primaryKey;autoIncrement:false"`
 	Title         string
 	Description   string
 	EventType     string

@@ -102,7 +102,7 @@ func FetchNews(w http.ResponseWriter, r *http.Request) {
 func UpdateNews(w http.ResponseWriter, r *http.Request) {
 
 	params := mux.Vars(r)
-	id, err := strconv.Atoi(params["societyID"])
+	id, err := strconv.Atoi(params["newsID"])
 	if err != nil {
 		http.Error(w, "Invalid ID", http.StatusBadRequest)
 		return
@@ -128,13 +128,13 @@ func UpdateNews(w http.ResponseWriter, r *http.Request) {
 func RemoveNews(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
-	societyID, err := strconv.Atoi(vars["societyID"])
+	newsID, err := strconv.Atoi(vars["newsID"])
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	if err := database.DB.Where("society_id = ?", societyID).Delete(&models.SocietyNews{}).Error; err != nil {
+	if err := database.DB.Where("news_id = ?", newsID).Delete(&models.SocietyNews{}).Error; err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -142,6 +142,10 @@ func RemoveNews(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(map[string]string{"message": "News successfully deleted"})
 }
+
+
+
+
 
 // ADMIN PANEL
 func FetchAllNewsAdminHome(w http.ResponseWriter, r *http.Request) {

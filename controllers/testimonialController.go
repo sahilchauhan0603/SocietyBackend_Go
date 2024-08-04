@@ -11,6 +11,7 @@ import (
 )
 
 type temp struct {
+	// TestimonialID          uint
 	FirstName              string
 	LastName               string
 	EnrollmentNo           uint
@@ -54,7 +55,7 @@ func AddNewTestimonial(w http.ResponseWriter, r *http.Request) {
 func UpdateTestimonial(w http.ResponseWriter, r *http.Request) {
 
 	params := mux.Vars(r)
-	id, err := strconv.Atoi(params["enrollmentNo"])
+	id, err := strconv.Atoi(params["testimonialID"])
 	if err != nil {
 		http.Error(w, "Invalid ID", http.StatusBadRequest)
 		return
@@ -97,7 +98,7 @@ func FetchTestimonialByID(w http.ResponseWriter, r *http.Request) {
 
 	var info []temp
 	if err := database.DB.Table("society_testimonials").
-		Select("student_profiles.first_name, student_profiles.last_name, society_testimonials.enrollment_no, student_profiles.branch, student_profiles.batch_year, student_profiles.profile_picture, student_profiles.society_id, student_profiles.society_position, society_testimonials.testimonial_description").
+		Select("student_profiles.first_name, student_profiles.last_name, society_testimonials.enrollment_no, society_testimonials.testimonial_id, student_profiles.branch, student_profiles.batch_year, student_profiles.profile_picture, student_profiles.society_id, student_profiles.society_position, society_testimonials.testimonial_description").
 		Joins("JOIN student_profiles ON student_profiles.enrollment_no = society_testimonials.enrollment_no").Where("society_testimonials.enrollment_no = ?", enrollmentNo).
 		Scan(&info).Error; err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -125,7 +126,6 @@ func FetchTestimonialBySocietyID(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(info)
 }
-
 
 func RemoveTestimonialSocietyID(w http.ResponseWriter, r *http.Request) {
 
@@ -155,13 +155,15 @@ func RemoveTestimonial(w http.ResponseWriter, r *http.Request) {
 }
 
 
-//ADMIN PANEL
+
+
+// ADMIN PANEL
 func FetchAllTestimonialsAdmin(w http.ResponseWriter, r *http.Request) {
 
 	var data []tempAdmin
 	if err := database.DB.Table("society_testimonials").
-	    Select("student_profiles.first_name, student_profiles.last_name, student_profiles.profile_picture, society_testimonials.testimonial_description").
-	    Joins("JOIN student_profiles ON student_profiles.enrollment_no = society_testimonials.enrollment_no").
+		Select("student_profiles.first_name, student_profiles.last_name, student_profiles.profile_picture, society_testimonials.testimonial_description").
+		Joins("JOIN student_profiles ON student_profiles.enrollment_no = society_testimonials.enrollment_no").
 		Scan(&data).Error; err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -171,14 +173,14 @@ func FetchAllTestimonialsAdmin(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(data)
 }
 func FetchAllTestimonialsSocietyAdmin(w http.ResponseWriter, r *http.Request) {
-    
+
 	vars := mux.Vars(r)
 	societyID := vars["societyID"]
 
 	var data []tempAdmin
 	if err := database.DB.Table("society_testimonials").
-	    Select("student_profiles.first_name, student_profiles.last_name, student_profiles.profile_picture, society_testimonials.testimonial_description").
-	    Joins("JOIN student_profiles ON student_profiles.enrollment_no = society_testimonials.enrollment_no").
+		Select("student_profiles.first_name, student_profiles.last_name, student_profiles.profile_picture, society_testimonials.testimonial_description").
+		Joins("JOIN student_profiles ON student_profiles.enrollment_no = society_testimonials.enrollment_no").
 		Where("society_testimonials.society_id = ?", societyID).
 		Scan(&data).Error; err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
