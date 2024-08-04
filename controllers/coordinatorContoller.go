@@ -12,6 +12,7 @@ import (
 
 type tempo struct {
 	SocietyID              uint
+	CoordinatorID          uint
 	CoordinatorName        string
 	CoordinatorDesignation string
 	CoordinatorEmail       string
@@ -21,7 +22,7 @@ type tempo struct {
 }
 
 type tempoAdmin struct {
-	CoordinatorID uint
+	CoordinatorID          uint
 	CoordinatorName        string
 	CoordinatorDesignation string
 	CoordinatorDetails     string
@@ -71,7 +72,7 @@ func UpdateCoordinator(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-    
+
 	// coordinator.CoordinatorID = id // Ensure ID is not modified
 	database.DB.Save(&coordinator)
 	w.Header().Set("Content-Type", "application/json")
@@ -83,7 +84,7 @@ func FetchAllCoordinators(w http.ResponseWriter, r *http.Request) {
 
 	var data []tempo
 	if err := database.DB.Table("society_coordinators").
-		Select("society_coordinators.society_id, society_coordinators.coordinator_details, society_coordinators.coordinator_name, society_coordinators.coordinator_email, society_coordinators.coordinator_designation, society_coordinators.image, society_profiles.society_name").
+		Select("society_coordinators.society_id, society_coordinators.coordinator_details, society_coordinators.coordinator_name, society_coordinators.coordinator_email, society_coordinators.coordinator_designation, society_coordinators.image, society_coordinators.coordinator_id, society_profiles.society_name").
 		Joins("JOIN society_profiles ON society_profiles.society_id = society_coordinators.society_id").
 		Scan(&data).Error; err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -101,8 +102,25 @@ func FetchCoordinatorByID(w http.ResponseWriter, r *http.Request) {
 
 	var info []tempo
 	if err := database.DB.Table("society_coordinators").
-	    Select("society_coordinators.society_id, society_coordinators.coordinator_details, society_coordinators.coordinator_name, society_coordinators.coordinator_email, society_coordinators.coordinator_designation, society_coordinators.image, society_profiles.society_name").
+		Select("society_coordinators.society_id, society_coordinators.coordinator_details, society_coordinators.coordinator_name, society_coordinators.coordinator_email, society_coordinators.coordinator_designation, society_coordinators.image, society_coordinators.coordinator_id, society_profiles.society_name").
 		Joins("JOIN society_profiles ON society_profiles.society_id = society_coordinators.society_id").Where("society_coordinators.society_id = ?", societyID).
+		Scan(&info).Error; err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(info)
+}
+func FetchCoordinatorByCoordID(w http.ResponseWriter, r *http.Request) {
+
+	vars := mux.Vars(r)
+	coordinatorID := vars["coordinatorID"]
+
+	var info []tempo
+	if err := database.DB.Table("society_coordinators").
+		Select("society_coordinators.society_id, society_coordinators.coordinator_details, society_coordinators.coordinator_name, society_coordinators.coordinator_email, society_coordinators.coordinator_designation, society_coordinators.image, society_coordinators.coordinator_id, society_profiles.society_name").
+		Joins("JOIN society_profiles ON society_profiles.society_id = society_coordinators.society_id").Where("society_coordinators.coordinatorID = ?", coordinatorID).
 		Scan(&info).Error; err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -115,9 +133,9 @@ func FetchCoordinatorByID(w http.ResponseWriter, r *http.Request) {
 func RemoveCoordinator(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
-	societyID := vars["societyID"]
+	coordinatorID := vars["coordinatorID"]
 
-	if err := database.DB.Where("society_id = ?", societyID).Delete(&models.SocietyCoordinator{}).Error; err != nil {
+	if err := database.DB.Where("coordinator_id = ?", coordinatorID).Delete(&models.SocietyCoordinator{}).Error; err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -127,7 +145,11 @@ func RemoveCoordinator(w http.ResponseWriter, r *http.Request) {
 }
 
 
-//ADMIN PANEL
+
+
+
+
+// ADMIN PANEL
 func FetchAllCoordinatorsAdmin(w http.ResponseWriter, r *http.Request) {
 
 	var data []tempoAdmin
@@ -149,7 +171,7 @@ func FetchCoordinatorAdminByID(w http.ResponseWriter, r *http.Request) {
 
 	var info []tempoAdmin
 	if err := database.DB.Table("society_coordinators").
-	Select("society_coordinators.coordinator_id, society_coordinators.society_id, society_coordinators.coordinator_details, society_coordinators.coordinator_name, society_coordinators.coordinator_designation").
+		Select("society_coordinators.coordinator_id, society_coordinators.society_id, society_coordinators.coordinator_details, society_coordinators.coordinator_name, society_coordinators.coordinator_designation").
 		Joins("JOIN society_profiles ON society_profiles.society_id = society_coordinators.society_id").
 		Where("society_coordinators.society_id = ?", societyID).
 		Scan(&info).Error; err != nil {

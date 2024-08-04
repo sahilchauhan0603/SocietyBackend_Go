@@ -44,7 +44,7 @@ func AddNewEvent(w http.ResponseWriter, r *http.Request) {
 func UpdateEvent(w http.ResponseWriter, r *http.Request) {
 
 	params := mux.Vars(r)
-	id, err := strconv.Atoi(params["societyID"])
+	id, err := strconv.Atoi(params["eventID"])
 	if err != nil {
 		http.Error(w, "Invalid ID", http.StatusBadRequest)
 		return
@@ -145,6 +145,8 @@ func RemoveEventsBySocietyID(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(map[string]string{"message": "Events successfully deleted"})
 }
+
+
 
 // ADMIN PANEL
 func FetchAllAdminEvents(w http.ResponseWriter, r *http.Request) {

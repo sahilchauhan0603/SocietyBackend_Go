@@ -83,7 +83,7 @@ func InitializeRoutes(router *mux.Router) {
 
 	//SOCIETY EVENTS
 	r.HandleFunc("/events", controllers.AddNewEvent).Methods("POST")
-	r.HandleFunc("/events/{societyID}", controllers.UpdateEvent).Methods("PUT")
+	r.HandleFunc("/events/{eventID}", controllers.UpdateEvent).Methods("PUT")
 	r.HandleFunc("/events", controllers.FetchAllEvents).Methods("GET")
 	r.HandleFunc("/events/{eventID}", controllers.FetchEventByID).Methods("GET")
 	r.HandleFunc("/events/society/{societyID}", controllers.FetchEventsBySocietyID).Methods("GET")
@@ -108,7 +108,7 @@ func InitializeRoutes(router *mux.Router) {
 
 	// Testimonials
 	r.HandleFunc("/testimonials", controllers.AddNewTestimonial).Methods("POST")
-	r.HandleFunc("/testimonials/{enrollmentNo}", controllers.UpdateTestimonial).Methods("PUT")
+	r.HandleFunc("/testimonials/{testimonialID}", controllers.UpdateTestimonial).Methods("PUT")
 	r.HandleFunc("/testimonials", controllers.FetchAllTestimonials).Methods("GET")
 	r.HandleFunc("/testimonials/{enrollmentNo}", controllers.RemoveTestimonial).Methods("DELETE")
 	r.HandleFunc("/testimonials/{societyID}", controllers.RemoveTestimonialSocietyID).Methods("DELETE")
@@ -119,8 +119,9 @@ func InitializeRoutes(router *mux.Router) {
 	r.HandleFunc("/coordinator", controllers.AddNewCoordinator).Methods("POST")
 	r.HandleFunc("/coordinator/{coordinatorID}", controllers.UpdateCoordinator).Methods("PUT")
 	r.HandleFunc("/coordinator", controllers.FetchAllCoordinators).Methods("GET")
-	r.HandleFunc("/coordinator/{societyID}", controllers.RemoveCoordinator).Methods("DELETE")
+	r.HandleFunc("/coordinator/{coordinatorID}", controllers.RemoveCoordinator).Methods("DELETE")
 	r.HandleFunc("/coordinator/{societyID}", controllers.FetchCoordinatorByID).Methods("GET")
+	r.HandleFunc("/coordinator/{coordinatorID}", controllers.FetchCoordinatorByCoordID).Methods("GET")
 
 	//Gallery
 	r.HandleFunc("/galleries", controllers.AddNewGallery).Methods("POST")
@@ -133,8 +134,8 @@ func InitializeRoutes(router *mux.Router) {
 	r.HandleFunc("/news", controllers.AddNewNews).Methods("POST")
 	r.HandleFunc("/news", controllers.FetchAllNews).Methods("GET")
 	r.HandleFunc("/news/{society_id}", controllers.FetchNews).Methods("GET")
-	r.HandleFunc("/news/{societyID}", controllers.UpdateNews).Methods("PUT")
-	r.HandleFunc("/news/{societyID}", controllers.RemoveNews).Methods("DELETE")
+	r.HandleFunc("/news/{newsID}", controllers.UpdateNews).Methods("PUT")
+	r.HandleFunc("/news/{newsID}", controllers.RemoveNews).Methods("DELETE")
 
 	r.HandleFunc("/contact", controllers.ContactUSHandler).Methods("POST")
 	r.HandleFunc("/feedback", controllers.FeedbackHandler).Methods("POST")
