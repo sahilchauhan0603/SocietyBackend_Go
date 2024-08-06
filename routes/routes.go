@@ -5,6 +5,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/sahilchauhan0603/society/controllers"
+	"github.com/sahilchauhan0603/society/middleware"
 )
 
 func InitializeRoutes(router *mux.Router) {
@@ -141,21 +142,23 @@ func InitializeRoutes(router *mux.Router) {
 	r.HandleFunc("/feedback", controllers.FeedbackHandler).Methods("POST")
 
 	// AdminRole routes
-    r.HandleFunc("/adminrole", controllers.AddNewAdminRole).Methods("POST")
-    r.HandleFunc("/adminroles", controllers.FetchAllAdminRoles).Methods("GET")
-    r.HandleFunc("/adminrole/{username}", controllers.FetchAdminRole).Methods("GET")
-    r.HandleFunc("/adminrole/{username}", controllers.UpdateAdminRole).Methods("PUT")
-    r.HandleFunc("/adminrole/{username}", controllers.RemoveAdminRole).Methods("DELETE")
-
+	r.HandleFunc("/admin/login", controllers.AdminLogin).Methods("POST")
+	adminRouter := router.PathPrefix("/api/v1/admin").Subrouter()
+	adminRouter.Use(middleware.AdminMiddleware)
+	adminRouter.HandleFunc("/adminrole", controllers.AddNewAdminRole).Methods("POST")
+	r.HandleFunc("/adminroles", controllers.FetchAllAdminRoles).Methods("GET")
+	r.HandleFunc("/adminrole/{username}", controllers.FetchAdminRole).Methods("GET")
+	r.HandleFunc("/adminrole/{username}", controllers.UpdateAdminRole).Methods("PUT")
+	adminRouter.HandleFunc("/adminrole/{username}", controllers.RemoveAdminRole).Methods("DELETE")
 
 	//ADMIN PANEL ROUTES
-    r.HandleFunc("/admin/home/news", controllers.FetchAllNewsAdminHome).Methods("GET")
+	r.HandleFunc("/admin/home/news", controllers.FetchAllNewsAdminHome).Methods("GET")
 
-    r.HandleFunc("/admin/news/{society_id}", controllers.FetchNewsAdminNews).Methods("GET")
-    r.HandleFunc("/admin/news", controllers.FetchAllNewsAdminNews).Methods("GET")
+	r.HandleFunc("/admin/news/{society_id}", controllers.FetchNewsAdminNews).Methods("GET")
+	r.HandleFunc("/admin/news", controllers.FetchAllNewsAdminNews).Methods("GET")
 
-    r.HandleFunc("/admin/members", controllers.FetchAllStudentsAdmin).Methods("GET")
-    r.HandleFunc("/admin/members/{societyID}", controllers.FetchStudentsSocietyAdmin).Methods("GET")
+	r.HandleFunc("/admin/members", controllers.FetchAllStudentsAdmin).Methods("GET")
+	r.HandleFunc("/admin/members/{societyID}", controllers.FetchStudentsSocietyAdmin).Methods("GET")
 
 	r.HandleFunc("/admin/coordinator", controllers.FetchAllCoordinatorsAdmin).Methods("GET")
 	r.HandleFunc("/admin/coordinator/{societyID}", controllers.FetchCoordinatorAdminByID).Methods("GET")
@@ -165,7 +168,7 @@ func InitializeRoutes(router *mux.Router) {
 
 	r.HandleFunc("/admin/societies", controllers.FetchAllSocietiesAdmin).Methods("GET")
 	r.HandleFunc("/admin/societies/{societyID}", controllers.FetchSocietyAdmin).Methods("GET")
-    
+
 	r.HandleFunc("/admin/testimonials", controllers.FetchAllTestimonialsAdmin).Methods("GET")
 	r.HandleFunc("/admin/testimonials/{societyID}", controllers.FetchAllTestimonialsSocietyAdmin).Methods("GET")
 }
