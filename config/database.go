@@ -7,6 +7,7 @@ import (
 
 	_ "github.com/lib/pq"
 	"github.com/sahilchauhan0603/society/models"
+	"golang.org/x/crypto/bcrypt"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -63,6 +64,37 @@ func DatabaseConnector() {
 	); err != nil {
 		log.Fatal(err)
 	}
+	checkAndCreateDefaultAdmin()
+}
+
+func checkAndCreateDefaultAdmin() {
+	var admin models.AdminPanelRole
+	result := DB.Where("role = ?", "admin").First(&admin)
+	if result.Error != nil && result.Error == gorm.ErrRecordNotFound {
+		// No admin found, create a default admin
+		defaultAdmin := models.AdminPanelRole{
+			Username: os.Getenv("ADMIN_USER"),
+			Password: hashPassword(os.Getenv("ADMIN_PASS")),
+			Role:     "admin",
+		}
+		if err := DB.Create(&defaultAdmin).Error; err != nil {
+			log.Fatal("failed to create default admin: ", err)
+		}
+		log.Println("Default admin user created")
+	} else if result.Error != nil {
+		log.Fatal("failed to check admin existence: ", result.Error)
+	} else {
+		log.Println("Admin user already exists")
+	}
+}
+
+// hashPassword hashes a plain text password using bcrypt
+func hashPassword(password string) string {
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		log.Fatal("failed to hash password: ", err)
+	}
+	return string(hashedPassword)
 }
 
 // func DatabaseConnector() {
