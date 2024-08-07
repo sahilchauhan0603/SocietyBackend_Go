@@ -76,6 +76,7 @@ func checkAndCreateDefaultAdmin() {
 			Username: os.Getenv("ADMIN_USER"),
 			Password: hashPassword(os.Getenv("ADMIN_PASS")),
 			Role:     "admin",
+			SocietyID: 0,
 		}
 		if err := DB.Create(&defaultAdmin).Error; err != nil {
 			log.Fatal("failed to create default admin: ", err)
