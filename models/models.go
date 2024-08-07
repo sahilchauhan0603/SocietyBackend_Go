@@ -158,7 +158,8 @@ type SocietyResetPassword struct {
 }
 
 type AdminPanelRole struct {
-	Username string `gorm:"primaryKey;autoIncrement"`
-	Password string `gorm:"not null;unique"`
-	Role     string
+	Username  string `gorm:"primaryKey;autoIncrement"`
+	Password  string `gorm:"not null;unique"`
+	Role      string
+	SocietyID int
 }
