@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 	"os"
 	"time"
@@ -14,26 +15,39 @@ import (
 )
 
 func AddNewAdminRole(w http.ResponseWriter, r *http.Request) {
+	// Log the request
+	log.Println("Received request to add new admin role")
 	var role models.AdminPanelRole
 	if err := json.NewDecoder(r.Body).Decode(&role); err != nil {
+		log.Printf("Error decoding request body: %v", err)
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-
+	// Log the decoded role
+	log.Printf("Decoded role: %+v", role)
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(role.Password), bcrypt.DefaultCost)
+	if err != nil {
+		log.Fatal("failed to hash password: ", err)
+	}
+	role.Password = string(hashedPassword)
 	// Check if table exists or create it if it doesn't
 	if !database.DB.Migrator().HasTable(&models.AdminPanelRole{}) {
+		log.Println("AdminPanelRole table does not exist, creating it")
 		if err := database.DB.AutoMigrate(&models.AdminPanelRole{}); err != nil {
+			log.Printf("Error creating AdminPanelRole table: %v", err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 	}
 	if err := database.DB.Create(&role).Error; err != nil {
+		log.Printf("Error inserting new role into database: %v", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(role)
+	log.Println("Successfully added new admin role")
 }
 
 func FetchAllAdminRoles(w http.ResponseWriter, r *http.Request) {
@@ -112,6 +126,7 @@ type Credentials struct {
 type Claims struct {
 	Username string `json:"username"`
 	Role     string `json:"role"`
+	ID       int    `json:"id"`
 	jwt.StandardClaims
 }
 
@@ -138,6 +153,7 @@ func AdminLogin(w http.ResponseWriter, r *http.Request) {
 	claims := &Claims{
 		Username: creds.Username,
 		Role:     admin.Role,
+		ID:       admin.SocietyID,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: expirationTime.Unix(),
 		},
@@ -151,9 +167,10 @@ func AdminLogin(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.SetCookie(w, &http.Cookie{
-		Name:    "token",
-		Value:   tokenString,
-		Expires: expirationTime,
+		Name:     "token",
+		Value:    tokenString,
+		Expires:  expirationTime,
+		HttpOnly: true,
 	})
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(map[string]interface{}{
