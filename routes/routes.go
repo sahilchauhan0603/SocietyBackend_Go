@@ -143,7 +143,7 @@ func InitializeRoutes(router *mux.Router) {
 	r.HandleFunc("/feedback", controllers.FeedbackHandler).Methods("POST")
 
 	// AdminRole routes
-	r.HandleFunc("/admin/login", controllers.AdminLogin).Methods("POST")
+	router.HandleFunc("/adminlogin", controllers.AdminLogin).Methods("POST")
 	adminRouter := router.PathPrefix("/api/v1/admin").Subrouter()
 	adminRouter.Use(middleware.AdminMiddleware)
 	adminRouter.HandleFunc("/adminrole", controllers.AddNewAdminRole).Methods("POST")
