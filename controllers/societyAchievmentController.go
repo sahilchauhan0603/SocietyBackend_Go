@@ -35,7 +35,7 @@ func AddNewAchievement(w http.ResponseWriter, r *http.Request) {
 func UpdateAchievement(w http.ResponseWriter, r *http.Request) {
 
 	params := mux.Vars(r)
-	id, err := strconv.Atoi(params["societyID"])
+	id, err := strconv.Atoi(params["achievementID"])
 	if err != nil {
 		http.Error(w, "Invalid ID", http.StatusBadRequest)
 		return
@@ -101,3 +101,20 @@ func RemoveAchievement(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(map[string]string{"message": "Achievement successfully deleted"})
 }
+func RemoveAchievementAchievementID(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	achievementID, err := strconv.Atoi(vars["achievementID"])
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	if err := database.DB.Where("society_achievement_id = ?", achievementID).Delete(&models.SocietyAchievement{}).Error; err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]string{"message": "Achievement successfully deleted"})
+}
+

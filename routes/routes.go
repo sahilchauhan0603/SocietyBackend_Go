@@ -45,7 +45,7 @@ func InitializeRoutes(router *mux.Router) {
 
 	//SOCIETY ROLES
 	r.HandleFunc("/roles", controllers.AddNewRole).Methods("POST")
-	r.HandleFunc("/roles/{id}", controllers.UpdateRole).Methods("PUT")
+	r.HandleFunc("/roles/{roleID}", controllers.UpdateRole).Methods("PUT")
 	r.HandleFunc("/roles", controllers.FetchAllRoles).Methods("GET")
 	r.HandleFunc("/roles/name/{name}", controllers.FetchRole).Methods("GET")
 	r.HandleFunc("/roles/society/{societyID}", controllers.FetchRoleSocietyID).Methods("GET")
@@ -77,10 +77,11 @@ func InitializeRoutes(router *mux.Router) {
 
 	//society Achievements
 	r.HandleFunc("/achievements", controllers.AddNewAchievement).Methods("POST")
-	r.HandleFunc("/achievements/{societyID}", controllers.UpdateAchievement).Methods("PUT")
+	r.HandleFunc("/achievements/{achievementID}", controllers.UpdateAchievement).Methods("PUT")
 	r.HandleFunc("/achievements", controllers.FetchAllAchievements).Methods("GET")
 	r.HandleFunc("/achievements/{societyID}", controllers.FetchSocietyAchievementsSocietyID).Methods("GET")
 	r.HandleFunc("/achievements/{societyID}", controllers.RemoveAchievement).Methods("DELETE")
+	r.HandleFunc("/achievements/{achievementID}", controllers.RemoveAchievementAchievementID).Methods("DELETE")
 
 	//SOCIETY EVENTS
 	r.HandleFunc("/events", controllers.AddNewEvent).Methods("POST")
@@ -111,7 +112,7 @@ func InitializeRoutes(router *mux.Router) {
 	r.HandleFunc("/testimonials", controllers.AddNewTestimonial).Methods("POST")
 	r.HandleFunc("/testimonials/{testimonialID}", controllers.UpdateTestimonial).Methods("PUT")
 	r.HandleFunc("/testimonials", controllers.FetchAllTestimonials).Methods("GET")
-	r.HandleFunc("/testimonials/{enrollmentNo}", controllers.RemoveTestimonial).Methods("DELETE")
+	r.HandleFunc("/testimonials/{testimonialID}", controllers.RemoveTestimonial).Methods("DELETE")
 	r.HandleFunc("/testimonials/{societyID}", controllers.RemoveTestimonialSocietyID).Methods("DELETE")
 	r.HandleFunc("/testimonials/{enrollmentNo}", controllers.FetchTestimonialByID).Methods("GET")
 	r.HandleFunc("/testimonials/society/{societyID}", controllers.FetchTestimonialBySocietyID).Methods("GET")
@@ -171,4 +172,13 @@ func InitializeRoutes(router *mux.Router) {
 
 	r.HandleFunc("/admin/testimonials", controllers.FetchAllTestimonialsAdmin).Methods("GET")
 	r.HandleFunc("/admin/testimonials/{societyID}", controllers.FetchAllTestimonialsSocietyAdmin).Methods("GET")
+
+	r.HandleFunc("/admin/achievements",controllers.FetchAllAchievements).Methods("GET")
+	r.HandleFunc("/admin/achievements/{societyID}",controllers.FetchSocietyAchievementsSocietyID).Methods("GET")
+
+	r.HandleFunc("/admin/gallery", controllers.FetchAllGalleries).Methods("GET")
+	r.HandleFunc("/admin/gallery/{society_id}", controllers.FetchGallery).Methods("GET")
+
+	r.HandleFunc("/admin/roles",controllers.FetchAllRolesAdmin).Methods("GET")
+	r.HandleFunc("/admin/roles/{societyID}",controllers.FetchAllRolesSocietyAdmin).Methods("GET")
 }
