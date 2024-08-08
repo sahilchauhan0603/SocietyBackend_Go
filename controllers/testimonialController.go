@@ -25,6 +25,7 @@ type temp struct {
 
 type tempAdmin struct {
 	ProfilePicture         string
+	TestimonialID          uint
 	FirstName              string
 	LastName               string
 	TestimonialDescription string
@@ -143,9 +144,9 @@ func RemoveTestimonialSocietyID(w http.ResponseWriter, r *http.Request) {
 
 func RemoveTestimonial(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	enrollmentNo := vars["enrollmentNo"]
+	testimonialID := vars["testimonialID"]
 
-	if err := database.DB.Where("enrollment_no = ?", enrollmentNo).Delete(&models.SocietyTestimonial{}).Error; err != nil {
+	if err := database.DB.Where("testimonial_id = ?", testimonialID).Delete(&models.SocietyTestimonial{}).Error; err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -156,13 +157,12 @@ func RemoveTestimonial(w http.ResponseWriter, r *http.Request) {
 
 
 
-
 // ADMIN PANEL
 func FetchAllTestimonialsAdmin(w http.ResponseWriter, r *http.Request) {
 
 	var data []tempAdmin
 	if err := database.DB.Table("society_testimonials").
-		Select("student_profiles.first_name, student_profiles.last_name, student_profiles.profile_picture, society_testimonials.testimonial_description").
+		Select("student_profiles.first_name, student_profiles.last_name, student_profiles.profile_picture, society_testimonials.testimonial_description, society_testimonials.testimonial_id").
 		Joins("JOIN student_profiles ON student_profiles.enrollment_no = society_testimonials.enrollment_no").
 		Scan(&data).Error; err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -179,7 +179,7 @@ func FetchAllTestimonialsSocietyAdmin(w http.ResponseWriter, r *http.Request) {
 
 	var data []tempAdmin
 	if err := database.DB.Table("society_testimonials").
-		Select("student_profiles.first_name, student_profiles.last_name, student_profiles.profile_picture, society_testimonials.testimonial_description").
+		Select("student_profiles.first_name, student_profiles.last_name, student_profiles.profile_picture, society_testimonials.testimonial_description, society_testimonials.testimonial_id").
 		Joins("JOIN student_profiles ON student_profiles.enrollment_no = society_testimonials.enrollment_no").
 		Where("society_testimonials.society_id = ?", societyID).
 		Scan(&data).Error; err != nil {

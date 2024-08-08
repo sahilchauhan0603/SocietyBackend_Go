@@ -10,6 +10,13 @@ import (
 	models "github.com/sahilchauhan0603/society/models"
 )
 
+type tempRole struct {
+	RoleID          int64
+	SocietyName     string
+	Rolename        string
+	RoleDescription string
+}
+
 func AddNewRole(w http.ResponseWriter, r *http.Request) {
 
 	var role models.SocietyRole
@@ -96,7 +103,7 @@ func FetchRoleSocietyID(w http.ResponseWriter, r *http.Request) {
 
 func UpdateRole(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
-	id, err := strconv.Atoi(params["id"])
+	id, err := strconv.Atoi(params["roleID"])
 	if err != nil {
 		http.Error(w, "Invalid ID", http.StatusBadRequest)
 		return
@@ -131,4 +138,40 @@ func RemoveRole(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(map[string]string{"message": "Role successfully deleted"})
+}
+
+
+
+//ADMIN PANEL
+func FetchAllRolesAdmin(w http.ResponseWriter, r *http.Request) {
+
+	var data []tempRole
+	if err := database.DB.Table("society_roles").
+		Select("society_profiles.society_name, society_roles.role_id, society_roles,rolename, society_roles.role_description").
+		Joins("JOIN society_profiles ON society_profiles.society_id = society_roles.society_id").
+		Scan(&data).Error; err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(data)
+}
+func FetchAllRolesSocietyAdmin(w http.ResponseWriter, r *http.Request) {
+
+	vars := mux.Vars(r)
+	societyID := vars["societyID"]
+
+	var data []tempRole
+	if err := database.DB.Table("society_roles").
+	    Select("society_profiles.society_name, society_roles.role_id, society_roles,rolename, society_roles.role_description").
+	    Joins("JOIN society_profiles ON society_profiles.society_id = society_roles.society_id").
+		Where("society_roles.society_id = ?", societyID).
+		Scan(&data).Error; err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(data)
 }

@@ -138,19 +138,19 @@ func FetchStudentBySocietyID(w http.ResponseWriter, r *http.Request) {
 
 // ADMIN PANEL
 func FetchAllStudentsAdmin(w http.ResponseWriter, r *http.Request) {
-    
+
 	var tempMembers []struct {
-		ProfilePicture string
-		FirstName      string
-		LastName       string
-		Branch         string
-		BatchYear      int
-		MobileNo       string
-		Email          string
-		StudentContributions string
+		ProfilePicture       string
+		FirstName            string
+		LastName             string
+		Branch               string
+		BatchYear            int
+		EnrollmentNo         uint
+		Email                string
+		// StudentContributions string
 	}
 	if err := database.DB.Model(&models.StudentProfile{}).
-		Select("profile_picture, first_name, last_name, branch, batch_year, mobile_no, email, student_contributions").
+		Select("profile_picture, first_name, last_name, branch, batch_year, enrollment_no, email").
 		Find(&tempMembers).Error; err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -161,22 +161,22 @@ func FetchAllStudentsAdmin(w http.ResponseWriter, r *http.Request) {
 }
 
 func FetchStudentsSocietyAdmin(w http.ResponseWriter, r *http.Request) {
-    
+
 	vars := mux.Vars(r)
 	societyID, err := strconv.ParseUint(vars["societyID"], 10, 64)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	
+
 	var tempMembers []struct {
-		ProfilePicture string
-		FirstName      string
-		LastName       string
-		Branch         string
-		BatchYear      int
-		MobileNo       string
-		Email          string
+		ProfilePicture       string
+		FirstName            string
+		LastName             string
+		Branch               string
+		BatchYear            int
+		MobileNo             string
+		Email                string
 		StudentContributions string
 	}
 	if err := database.DB.Model(&models.StudentProfile{}).
