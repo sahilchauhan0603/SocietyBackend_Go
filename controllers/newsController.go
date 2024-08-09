@@ -28,7 +28,8 @@ type tempAdminNews struct {
 
 type tempNewsSocietyAdmin struct {
 	SocietyID   uint
-	Description string
+	NewsID      uint
+	Title       string
 	DateOfNews  time.Time
 	SocietyName string
 	Author      string
@@ -143,10 +144,6 @@ func RemoveNews(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(map[string]string{"message": "News successfully deleted"})
 }
 
-
-
-
-
 // ADMIN PANEL
 func FetchAllNewsAdminHome(w http.ResponseWriter, r *http.Request) {
 
@@ -168,7 +165,7 @@ func FetchAllNewsAdminNews(w http.ResponseWriter, r *http.Request) {
 
 	var info []tempNewsSocietyAdmin
 	if err := database.DB.Table("society_news").
-		Select("society_news.society_id, society_news.description, society_news.date_of_news, society_news.author ,society_profiles.society_name").
+		Select("society_news.society_id, society_news.news_id, society_news.title, society_news.date_of_news, society_news.author ,society_profiles.society_name").
 		Joins("JOIN society_profiles ON society_profiles.society_id = society_news.society_id").
 		Scan(&info).Error; err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -191,7 +188,7 @@ func FetchNewsAdminNews(w http.ResponseWriter, r *http.Request) {
 
 	var info []tempNewsSocietyAdmin
 	if err := database.DB.Table("society_news").
-		Select("society_news.society_id, society_news.description, society_news.date_of_news, society_news.author ,society_profiles.society_name").
+		Select("society_news.society_id, society_news.news_id, society_news.title, society_news.date_of_news, society_news.author ,society_profiles.society_name").
 		Joins("JOIN society_profiles ON society_profiles.society_id = society_news.society_id").Where("society_news.society_id = ?", societyID).
 		Scan(&info).Error; err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
