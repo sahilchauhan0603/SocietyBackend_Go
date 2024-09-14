@@ -33,6 +33,7 @@ type tempNewsSocietyAdmin struct {
 	DateOfNews  time.Time
 	SocietyName string
 	Author      string
+	Description string
 }
 
 func AddNewNews(w http.ResponseWriter, r *http.Request) {
@@ -165,7 +166,7 @@ func FetchAllNewsAdminNews(w http.ResponseWriter, r *http.Request) {
 
 	var info []tempNewsSocietyAdmin
 	if err := database.DB.Table("society_news").
-		Select("society_news.society_id, society_news.news_id, society_news.title, society_news.date_of_news, society_news.author ,society_profiles.society_name").
+		Select("society_news.society_id, society_news.news_id, society_news.title, society_news.date_of_news, society_news.description, society_news.author ,society_profiles.society_name").
 		Joins("JOIN society_profiles ON society_profiles.society_id = society_news.society_id").
 		Scan(&info).Error; err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -188,7 +189,7 @@ func FetchNewsAdminNews(w http.ResponseWriter, r *http.Request) {
 
 	var info []tempNewsSocietyAdmin
 	if err := database.DB.Table("society_news").
-		Select("society_news.society_id, society_news.news_id, society_news.title, society_news.date_of_news, society_news.author ,society_profiles.society_name").
+		Select("society_news.society_id, society_news.news_id, society_news.title, society_news.date_of_news, society_news.description, society_news.author ,society_profiles.society_name").
 		Joins("JOIN society_profiles ON society_profiles.society_id = society_news.society_id").Where("society_news.society_id = ?", societyID).
 		Scan(&info).Error; err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
