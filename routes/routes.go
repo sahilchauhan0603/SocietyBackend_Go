@@ -105,7 +105,7 @@ func InitializeRoutes(router *mux.Router) {
 
 	//Gallery
 	r.HandleFunc("/galleries", controllers.FetchAllGalleries).Methods("GET")
-	r.HandleFunc("/galleries/{society_id}", controllers.FetchGallery).Methods("GET")
+	r.HandleFunc("/galleries/{society_id}", controllers.FetchGallerySociety).Methods("GET")
 
 	//News
 	r.HandleFunc("/news", controllers.FetchAllNews).Methods("GET")
