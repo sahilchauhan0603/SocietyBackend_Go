@@ -10,6 +10,11 @@ import (
 	models "github.com/sahilchauhan0603/society/models"
 )
 
+type tempGallery struct {
+	Image       string
+	SocietyName string
+}
+
 func AddNewGallery(w http.ResponseWriter, r *http.Request) {
 
 	var gallery models.SocietyGallery
@@ -36,7 +41,6 @@ func AddNewGallery(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(gallery)
 }
 
-
 func FetchAllGalleries(w http.ResponseWriter, r *http.Request) {
 
 	var galleries []models.SocietyGallery
@@ -51,7 +55,7 @@ func FetchAllGalleries(w http.ResponseWriter, r *http.Request) {
 }
 
 func FetchGallery(w http.ResponseWriter, r *http.Request) {
-	
+
 	vars := mux.Vars(r)
 	societyID, err := strconv.Atoi(vars["society_id"])
 	if err != nil {
@@ -68,6 +72,20 @@ func FetchGallery(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(gallery)
+}
+
+func FetchGallerySociety(w http.ResponseWriter, r *http.Request) {
+	var data []tempGallery
+	if err := database.DB.Table("society_galleries").
+		Select("society_galleries.image, society_profiles.society_name").
+		Joins("JOIN society_profiles ON society_profiles.society_id = society_galleries.society_id").
+		Scan(&data).Error; err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(data)
 }
 
 func UpdateGallery(w http.ResponseWriter, r *http.Request) {
