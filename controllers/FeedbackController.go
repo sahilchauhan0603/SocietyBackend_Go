@@ -10,8 +10,6 @@ import (
 )
 
 type Feedbackform struct {
-	Name     string
-	Email    string
 	Feedback string
 }
 
@@ -57,8 +55,6 @@ func FeedbackHandler(w http.ResponseWriter, r *http.Request) {
             <h2>New Feedback Form Submission</h2>
         </div>
         <div class="content">
-            <p><strong>Name:</strong> %s</p>
-            <p><strong>Email:</strong> %s</p>
             <p><strong>Feedback:</strong></p>
             <p>%s</p>
         </div>
@@ -67,7 +63,7 @@ func FeedbackHandler(w http.ResponseWriter, r *http.Request) {
         </div>
     </div>
 </body>
-</html>`, data.Name, data.Email, data.Feedback)
+</html>`, data.Feedback)
 	err := helper.SendEmail(emailUser, "New Feedback Form Submission from BPIT Society Management Website", emailBody)
 	if err != nil {
 		log.Printf("Error sending email: %v\n", err)
