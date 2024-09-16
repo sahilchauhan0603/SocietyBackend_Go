@@ -20,12 +20,22 @@ type SocietyQuery struct {
 
 // Map of society names/IDs to their respective email addresses
 var societyEmails = map[string]string{
-	"Namespace":   "namespace@society.com",
-	"Anveshan":    "anveshan@society.com",
-	"Hash Define": "hashdefine@society.com",
-	"WIBD":        "wibd@society.com",
-	"GDSC":        "gdsc@society.com",
-	// Add more societies as needed
+	"Namespace":   "jyoti43cseb22@bpitindia.edu.in",
+	"Anveshan":    "parth83cseb22@bpitindia.edu.in",
+	"Hash Define": "mohit84cseb22@bpitindia.edu.in",
+	"WIBD":        "jyoti43cseb22@bpitindia.edu.in",
+	"GDSC":        "sahil82cseb22@bpitindia.edu.in",
+	"WIE":         "jyoti43cseb22@bpitindia.edu.in",
+	"IEEE":        "sahil82cseb22@bpitindia.edu.in",
+	"Electonauts": "harsh63cseb22@bpitindia.edu.in",
+	"Dhrishti":    "jyoti43cseb22@bpitindia.edu.in",
+	"Opti Click":  "tanmay59cseb22@bpitindia.edu.in",
+	"Avaran":      "tanmay59cseb22@bpitindia.edu.in",
+	"Octave":      "ritesh100cseb22@bpitindia.edu.in",
+	"Panache":     "sahil82cseb22@bpitindia.edu.in",	
+	"Mavericks":   "sahil82cseb22@bpitindia.edu.in",
+	"Kalam":       "sahil82cseb22@bpitindia.edu.in",
+	"Chromavita":  "sahil82cseb22@bpitindia.edu.in",
 }
 
 // func SocietyQueryHandler(w http.ResponseWriter, r *http.Request) {

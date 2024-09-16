@@ -32,6 +32,7 @@ func AddNewStudent(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(stud)
 }
+
 func UpdateStudent(w http.ResponseWriter, r *http.Request) {
 
 	params := mux.Vars(r)
@@ -57,6 +58,7 @@ func UpdateStudent(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(stud)
 }
+
 func FetchAllStudents(w http.ResponseWriter, r *http.Request) {
 	var students []models.StudentProfile
 	if err := database.DB.Preload("StudentAchievements").Order("society_id ASC").Find(&students).Error; err != nil {
