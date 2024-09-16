@@ -113,6 +113,7 @@ func InitializeRoutes(router *mux.Router) {
 
 	r.HandleFunc("/contact", controllers.ContactUSHandler).Methods("POST")
 	r.HandleFunc("/feedback", controllers.FeedbackHandler).Methods("POST")
+	r.HandleFunc("/becomeMember", controllers.BecomeMemberHandler).Methods("POST")
 
 
 
