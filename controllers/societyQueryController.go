@@ -38,28 +38,6 @@ var societyEmails = map[string]string{
 	"Chromavita":  "sahil82cseb22@bpitindia.edu.in",
 }
 
-// func SocietyQueryHandler(w http.ResponseWriter, r *http.Request) {
-
-// 	emailUser := os.Getenv("EMAIL_USER")
-
-// 	var formdata SocietyQuery
-// 	if err := json.NewDecoder(r.Body).Decode(&formdata); err != nil {
-// 		w.WriteHeader(http.StatusBadRequest)
-// 		return
-// 	}
-// 	emailBody := fmt.Sprintf("<p> StudentName : %s </p> <p>Society: %s</p> <p>Batch: %s</p> <p>Branch: %s</p> <p>EnrollmentNo : %d</p> <p>Query : %s</p>", formdata.StudentName, formdata.Society, formdata.Batch, formdata.Branch, formdata.StudentEnrollmentNumber, formdata.Query)
-// 	err := helper.SendEmail(emailUser, "SOCIETY QUERY FORM", emailBody)
-// 	if err != nil {
-// 		log.Printf("Error sending email: %v\n", err)
-// 		http.Error(w, "Failed to send email", http.StatusInternalServerError)
-// 		return
-// 	}
-// 	w.WriteHeader(http.StatusOK)
-// 	json.NewEncoder(w).Encode(map[string]string{
-// 		"message": "mail sent successfully",
-// 	})
-// }
-
 // Handler to process the society query form submission
 func SocietyQueryHandler(w http.ResponseWriter, r *http.Request) {
 
