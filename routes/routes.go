@@ -75,7 +75,8 @@ func InitializeRoutes(router *mux.Router) {
 	r.HandleFunc("/events/{eventID}", controllers.FetchEventByID).Methods("GET")
 	r.HandleFunc("/events/society/{societyID}", controllers.FetchEventsBySocietyID).Methods("GET")
 	r.HandleFunc("/events/society/{societyID}", controllers.RemoveEventsBySocietyID).Methods("DELETE")
-	r.HandleFunc("/events/{societyID}/{eventID}", controllers.RegisterEventHandler).Methods("POST")
+	// r.HandleFunc("/events/{societyID}/{eventID}", controllers.RegisterForEvent).Methods("POST")
+	r.HandleFunc("/registerForEvent", controllers.RegisterForEvent).Methods("POST")
 
 	// Student Achievements
 	r.HandleFunc("/studentachievements", controllers.AddNewStudentAchievement).Methods("POST")
