@@ -66,6 +66,7 @@ func InitializeRoutes(router *mux.Router) {
 	r.HandleFunc("/societies/members/{societyID}", controllers.FetchStudentBySocietyID).Methods("GET")
 	//query form
 	r.HandleFunc("/societies/{societyID}/contact", controllers.SocietyQueryHandler).Methods("POST")
+	r.HandleFunc("/createSociety", controllers.CreateSocietyHandler).Methods("POST")
 
 	//society Achievements
 	r.HandleFunc("/achievements", controllers.FetchAllAchievements).Methods("GET")
