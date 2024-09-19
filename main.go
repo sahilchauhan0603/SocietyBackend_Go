@@ -31,9 +31,10 @@ func main() {
 
 	// Enable CORS
 	cors := handlers.CORS(
-		handlers.AllowedOrigins([]string{"*"}), // Change to specific origins in production
+		handlers.AllowedOrigins([]string{"https://societymanagementfrontend-h3v3.onrender.com"}), // Specific frontend origin
 		handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}),
 		handlers.AllowedHeaders([]string{"Authorization", "Content-Type"}),
+		handlers.AllowCredentials(), // Allow credentials
 	)
 
 	// Set the port for the server
