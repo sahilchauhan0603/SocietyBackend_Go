@@ -11,12 +11,14 @@ import (
 func InitializeRoutes(router *mux.Router) {
 
 	// Handle preflight requests for the /api/v1 endpoints
-	router.PathPrefix("/api/v1").Methods("OPTIONS").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Access-Control-Allow-Origin", "*")
-		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
-		w.Header().Set("Access-Control-Allow-Headers", "Authorization, Content-Type")
-		w.WriteHeader(http.StatusNoContent)
-	})
+    router.PathPrefix("/api/v1").Methods("OPTIONS").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+        w.Header().Set("Access-Control-Allow-Origin", "https://societymanagementfrontend-h3v3.onrender.com") // Replace with your frontend's URL
+        w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+        w.Header().Set("Access-Control-Allow-Headers", "Authorization, Content-Type")
+        w.Header().Set("Access-Control-Allow-Credentials", "true") // Allow credentials
+        w.WriteHeader(http.StatusNoContent)
+    })
+
 
 	router.HandleFunc("/microsoftLogin", controllers.HandleMicrosoftLogin).Methods("GET")
 	router.HandleFunc("/callback", controllers.HandleMicrosoftCallback).Methods("GET")
