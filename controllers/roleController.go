@@ -15,6 +15,7 @@ type tempRole struct {
 	SocietyName     string
 	Rolename        string
 	RoleDescription string
+	SocietyID       int64	
 }
 
 func AddNewRole(w http.ResponseWriter, r *http.Request) {
@@ -140,14 +141,12 @@ func RemoveRole(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(map[string]string{"message": "Role successfully deleted"})
 }
 
-
-
-//ADMIN PANEL
+// ADMIN PANEL
 func FetchAllRolesAdmin(w http.ResponseWriter, r *http.Request) {
 
 	var data []tempRole
 	if err := database.DB.Table("society_roles").
-		Select("society_profiles.society_name, society_roles.role_id, society_roles,rolename, society_roles.role_description").
+		Select("society_profiles.society_name, society_roles.role_id, society_roles,rolename, society_roles.role_description, society_profiles.society_id").
 		Joins("JOIN society_profiles ON society_profiles.society_id = society_roles.society_id").
 		Scan(&data).Error; err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -164,8 +163,8 @@ func FetchAllRolesSocietyAdmin(w http.ResponseWriter, r *http.Request) {
 
 	var data []tempRole
 	if err := database.DB.Table("society_roles").
-	    Select("society_profiles.society_name, society_roles.role_id, society_roles,rolename, society_roles.role_description").
-	    Joins("JOIN society_profiles ON society_profiles.society_id = society_roles.society_id").
+		Select("society_profiles.society_name, society_roles.role_id, society_roles,rolename, society_roles.role_description, society_profiles.society_id").
+		Joins("JOIN society_profiles ON society_profiles.society_id = society_roles.society_id").
 		Where("society_roles.society_id = ?", societyID).
 		Scan(&data).Error; err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
