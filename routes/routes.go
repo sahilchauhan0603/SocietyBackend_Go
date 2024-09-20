@@ -10,43 +10,50 @@ import (
 
 func InitializeRoutes(router *mux.Router) {
 
-	// Handle preflight requests for the /api/v1 endpoints
+	// // Handle preflight requests for the /api/v1 endpoints
+    // router.PathPrefix("/api/v1").Methods("OPTIONS").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	// 	// Define allowed origins (multiple URLs)
+	// 	allowedOrigins := []string{
+	// 		"https://societymanagementfrontend-h3v3.onrender.com",
+	// 		"https://societymanagementfrontend-h3v3.onrender.com/admin",
+	// 		"http://localhost:8000", // For local development
+	// 	}
+	
+	// 	// Get the origin of the incoming request
+	// 	origin := r.Header.Get("Origin")
+	
+	// 	// Check if the origin is in the allowedOrigins list
+	// 	isAllowed := false
+	// 	for _, allowedOrigin := range allowedOrigins {
+	// 		if origin == allowedOrigin {
+	// 			isAllowed = true
+	// 			w.Header().Set("Access-Control-Allow-Origin", origin)
+	// 			break
+	// 		}
+	// 	}
+	
+	// 	// Optionally, handle cases where the origin is not allowed
+	// 	if !isAllowed {
+	// 		http.Error(w, "CORS not allowed", http.StatusForbidden)
+	// 		return
+	// 	}
+	
+	// 	// Set CORS headers
+	// 	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+	// 	w.Header().Set("Access-Control-Allow-Headers", "Authorization, Content-Type")
+	// 	w.Header().Set("Access-Control-Allow-Credentials", "true") // Allow credentials
+	
+	// 	w.WriteHeader(http.StatusNoContent)
+	// })
+	
+    // Handle preflight requests for the /api/v1 endpoints
     router.PathPrefix("/api/v1").Methods("OPTIONS").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// Define allowed origins (multiple URLs)
-		allowedOrigins := []string{
-			"https://societymanagementfrontend-h3v3.onrender.com",
-			"https://societymanagementfrontend-h3v3.onrender.com/admin",
-			"http://localhost:8000", // For local development
-		}
-	
-		// Get the origin of the incoming request
-		origin := r.Header.Get("Origin")
-	
-		// Check if the origin is in the allowedOrigins list
-		isAllowed := false
-		for _, allowedOrigin := range allowedOrigins {
-			if origin == allowedOrigin {
-				isAllowed = true
-				w.Header().Set("Access-Control-Allow-Origin", origin)
-				break
-			}
-		}
-	
-		// Optionally, handle cases where the origin is not allowed
-		if !isAllowed {
-			http.Error(w, "CORS not allowed", http.StatusForbidden)
-			return
-		}
-	
-		// Set CORS headers
-		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
-		w.Header().Set("Access-Control-Allow-Headers", "Authorization, Content-Type")
-		w.Header().Set("Access-Control-Allow-Credentials", "true") // Allow credentials
-	
-		w.WriteHeader(http.StatusNoContent)
-	})
-	
-
+        w.Header().Set("Access-Control-Allow-Origin", "https://societymanagementfrontend-h3v3.onrender.com") // Replace with your frontend's URL
+        w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+        w.Header().Set("Access-Control-Allow-Headers", "Authorization, Content-Type")
+        w.Header().Set("Access-Control-Allow-Credentials", "true") // Allow credentials
+        w.WriteHeader(http.StatusNoContent)
+    })
 
 	router.HandleFunc("/microsoftLogin", controllers.HandleMicrosoftLogin).Methods("GET")
 	router.HandleFunc("/callback", controllers.HandleMicrosoftCallback).Methods("GET")
