@@ -46,14 +46,42 @@ func InitializeRoutes(router *mux.Router) {
 	// 	w.WriteHeader(http.StatusNoContent)
 	// })
 	
-    // Handle preflight requests for the /api/v1 endpoints
-    router.PathPrefix("/api/v1").Methods("OPTIONS").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-        w.Header().Set("Access-Control-Allow-Origin", "https://societymanagementfrontend-h3v3.onrender.com") // Replace with your frontend's URL
-        w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
-        w.Header().Set("Access-Control-Allow-Headers", "Authorization, Content-Type")
-        w.Header().Set("Access-Control-Allow-Credentials", "true") // Allow credentials
-        w.WriteHeader(http.StatusNoContent)
-    })
+
+
+    // // Handle preflight requests for the /api/v1 endpoints
+    // router.PathPrefix("/api/v1").Methods("OPTIONS").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+    //     w.Header().Set("Access-Control-Allow-Origin", "https://societymanagementfrontend-h3v3.onrender.com") // Replace with your frontend's URL
+    //     w.Header().Set("Access-Control-Allow-Origin", "http://localhost:8000") // Replace with your frontend's URL
+    //     w.Header().Set("Access-Control-Allow-Origin", "http://localhost:5173") // Replace with your frontend's URL
+    //     w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+    //     w.Header().Set("Access-Control-Allow-Headers", "Authorization, Content-Type")
+    //     w.Header().Set("Access-Control-Allow-Credentials", "true") // Allow credentials
+    //     w.WriteHeader(http.StatusNoContent)
+    // })
+
+	// Handle preflight requests for the /api/v1 endpoints
+router.PathPrefix("/api/v1").Methods("OPTIONS").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+    origin := r.Header.Get("Origin")
+    allowedOrigins := []string{
+        "https://societymanagementfrontend-h3v3.onrender.com",
+        "http://localhost:8000",
+        "http://localhost:5173",
+    }
+
+    // Check if the origin is in the allowed origins list
+    for _, o := range allowedOrigins {
+        if origin == o {
+            w.Header().Set("Access-Control-Allow-Origin", origin)
+            break
+        }
+    }
+
+    w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+    w.Header().Set("Access-Control-Allow-Headers", "Authorization, Content-Type")
+    w.Header().Set("Access-Control-Allow-Credentials", "true") // Allow credentials
+    w.WriteHeader(http.StatusNoContent)
+})
+
 
 	router.HandleFunc("/microsoftLogin", controllers.HandleMicrosoftLogin).Methods("GET")
 	router.HandleFunc("/callback", controllers.HandleMicrosoftCallback).Methods("GET")
