@@ -86,8 +86,8 @@ router.PathPrefix("/api/v1").Methods("OPTIONS").HandlerFunc(func(w http.Response
 	router.HandleFunc("/microsoftLogin", controllers.HandleMicrosoftLogin).Methods("GET")
 	router.HandleFunc("/callback", controllers.HandleMicrosoftCallback).Methods("GET")
 
-	router.HandleFunc("/login", controllers.Login).Methods("POST")
-	router.HandleFunc("/signup", controllers.Signup).Methods("POST")
+	// router.HandleFunc("/login", controllers.Login).Methods("POST")
+	// router.HandleFunc("/signup", controllers.Signup).Methods("POST")
 	router.HandleFunc("/forgotPassword", controllers.SendEmail).Methods("POST")
 	router.HandleFunc("/resetPassword", controllers.VerifyReset).Methods("POST")
 	// registerHandler := http.HandlerFunc(controllers.Register)
@@ -98,6 +98,8 @@ router.PathPrefix("/api/v1").Methods("OPTIONS").HandlerFunc(func(w http.Response
 
 
 	r := router.PathPrefix("/api/v1").Subrouter()
+	r.HandleFunc("/login", controllers.Login).Methods("POST")
+	r.HandleFunc("/signup", controllers.Signup).Methods("POST")
 	// r.Use(middleware.JWTVerify)
 
 	//USER
