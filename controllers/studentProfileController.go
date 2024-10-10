@@ -172,6 +172,7 @@ func FetchStudentsSocietyAdmin(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var tempMembers []struct {
+		EnrollmentNo         uint
 		ProfilePicture       string
 		FirstName            string
 		LastName             string
@@ -182,7 +183,7 @@ func FetchStudentsSocietyAdmin(w http.ResponseWriter, r *http.Request) {
 		StudentContributions string
 	}
 	if err := database.DB.Model(&models.StudentProfile{}).
-		Select("profile_picture, first_name, last_name, branch, batch_year, mobile_no, email, student_contributions").
+		Select("profile_picture, first_name, last_name, branch, batch_year, mobile_no, email, enrollment_no, student_contributions").
 		Where("society_id = ?", societyID).
 		Find(&tempMembers).Error; err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
