@@ -76,7 +76,7 @@ router.PathPrefix("/api/v1").Methods("OPTIONS").HandlerFunc(func(w http.Response
         }
     }
 
-    w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+    w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
     w.Header().Set("Access-Control-Allow-Headers", "Authorization, Content-Type")
     w.Header().Set("Access-Control-Allow-Credentials", "true") // Allow credentials
     w.WriteHeader(http.StatusNoContent)
