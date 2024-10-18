@@ -82,7 +82,7 @@ func CreateSocietyHandler(w http.ResponseWriter, r *http.Request) {
     </div>
 </body>
 </html>`, data.SocietyName, data.HeadName, data.Email, data.MobileNo, data.Website, data.Category, data.DateOfRegistration, data.Describe)
-	err := helper.SendEmail(emailUser, "New Contact Us Form Submission from BPIT Society Management Portal", emailBody)
+	err := helper.SendEmail(emailUser, "New Society Registration Request Form Submission from BPIT Society Management Portal", emailBody)
 	if err != nil {
 		log.Printf("Error sending email: %v\n", err)
 		http.Error(w, "Failed to send email", http.StatusInternalServerError)

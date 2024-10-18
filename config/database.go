@@ -50,7 +50,7 @@ func DatabaseConnector() {
 	if err := DB.AutoMigrate(
 		&models.SocietyProfile{},
 		&models.SocietyRole{},
-		&models.SocietyUser{},
+		&models.SocietyUser{},  //no need to add data in this table
 		&models.StudentProfile{},
 		&models.SocietyAchievement{},
 		&models.SocietyEvent{},
