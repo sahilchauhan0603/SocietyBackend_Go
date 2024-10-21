@@ -19,6 +19,19 @@ type tempoAdminEvents struct {
 	SocietyName   string
 }
 
+type event struct {
+	SocietyName string
+	SocietyID   uint
+	EventID     uint
+	Title       string
+	Description string
+	EventType   string
+	ModeOfEvent string
+	Location    string
+	LinkToEvent string
+	EventDateTime string
+}
+
 func AddNewEvent(w http.ResponseWriter, r *http.Request) {
 	var event models.SocietyEvent
 	if err := json.NewDecoder(r.Body).Decode(&event); err != nil {
@@ -68,14 +81,26 @@ func UpdateEvent(w http.ResponseWriter, r *http.Request) {
 }
 
 func FetchAllEvents(w http.ResponseWriter, r *http.Request) {
-	var events []models.SocietyEvent
-	if err := database.DB.Order("event_id ASC").Find(&events).Error; err != nil {
+	// var events []models.SocietyEvent
+	// if err := database.DB.Order("event_id ASC").Find(&events).Error; err != nil {
+	// 	http.Error(w, err.Error(), http.StatusInternalServerError)
+	// 	return
+	// }
+
+	// w.Header().Set("Content-Type", "application/json")
+	// json.NewEncoder(w).Encode(events)
+
+	var info []event
+	if err := database.DB.Table("society_events").
+		Select("society_profiles.society_name, society_events.society_id, society_events.event_id, society_events.title, society_events.description, society_events.event_type, society_events.mode_of_event, society_events.location, society_events.link_to_event, society_events.event_date_time").
+		Joins("JOIN society_profiles ON society_profiles.society_id = society_events.society_id").
+		Scan(&info).Error; err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(events)
+	json.NewEncoder(w).Encode(info)
 }
 
 func FetchEventByID(w http.ResponseWriter, r *http.Request) {
@@ -98,20 +123,19 @@ func FetchEventByID(w http.ResponseWriter, r *http.Request) {
 
 func FetchEventsBySocietyID(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	societyID, err := strconv.Atoi(vars["societyID"])
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	var events []models.SocietyEvent
-	if err := database.DB.Where("society_id = ?", societyID).Find(&events).Error; err != nil {
-		http.Error(w, err.Error(), http.StatusNotFound)
+	societyID := vars["societyID"]
+	
+	var info []event
+	if err := database.DB.Table("society_events").
+		Select("society_profiles.society_name, society_events.society_id, society_events.event_id, society_events.title, society_events.description, society_events.event_type, society_events.mode_of_event, society_events.location, society_events.link_to_event, society_events.event_date_time").
+		Joins("JOIN society_profiles ON society_profiles.society_id = society_events.society_id").Where("society_events.society_id = ?", societyID).
+		Scan(&info).Error; err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(events)
+	json.NewEncoder(w).Encode(info)
 }
 func RemoveEvent(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
@@ -145,8 +169,6 @@ func RemoveEventsBySocietyID(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(map[string]string{"message": "Events successfully deleted"})
 }
-
-
 
 // ADMIN PANEL
 func FetchAllAdminEvents(w http.ResponseWriter, r *http.Request) {
