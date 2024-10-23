@@ -130,3 +130,21 @@ func RemoveGallery(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(map[string]string{"message": "Society Gallery successfully deleted"})
 }
+
+func RemoveGallerySocietyID(w http.ResponseWriter, r *http.Request){
+
+	vars := mux.Vars(r)
+	galleryID, err := strconv.Atoi(vars["galleryID"])
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	if err := database.DB.Where("gallery_id = ?", galleryID).Delete(&models.SocietyGallery{}).Error; err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]string{"message": "News successfully deleted"})
+}
