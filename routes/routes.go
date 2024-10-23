@@ -255,7 +255,7 @@ router.PathPrefix("/api/v1").Methods("OPTIONS").HandlerFunc(func(w http.Response
 	r.HandleFunc("/admin/gallery/{society_id}", controllers.FetchGallery).Methods("GET")
 	r.HandleFunc("/galleries/{societyID}", controllers.UpdateGallery).Methods("PUT")
 	r.HandleFunc("/galleries/{societyID}", controllers.RemoveGallery).Methods("DELETE")
-    
+	r.HandleFunc("/galleries/{galleryID}", controllers.RemoveGallerySocietyID).Methods("DELETE")
 
 	r.HandleFunc("/roles", controllers.AddNewRole).Methods("POST")
 	r.HandleFunc("/roles/{roleID}", controllers.UpdateRole).Methods("PUT")
