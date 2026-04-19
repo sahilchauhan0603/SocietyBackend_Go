@@ -1,0 +1,39 @@
+# Environment and local secrets
+.env
+.env.*
+!.env.example
+
+# Logs
+logs/
+*.log
+
+# Build output and binaries
+bin/
+build/
+dist/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+
+# Go workspace files (optional, machine-local)
+go.work
+go.work.sum
+
+# Coverage reports
+coverage.out
+coverage.txt
+*.coverprofile
+
+# Temporary files
+tmp/
+temp/
+
+# Editor/OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
