@@ -3,6 +3,7 @@ package config
 import (
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 
@@ -33,6 +34,8 @@ type DatabaseConfig struct {
 	User     string
 	Password string
 	SSLMode  string
+	MaxRetry int
+	RetryGap time.Duration
 }
 
 type AuthConfig struct {
@@ -104,6 +107,8 @@ func Load() (*Config, error) {
 			User:     os.Getenv("DB_USER"),
 			Password: os.Getenv("DB_PASS"),
 			SSLMode:  getEnvWithDefault("DB_SSLMODE", "verify-full"),
+			MaxRetry: parseIntWithDefault("DB_CONNECT_MAX_RETRIES", 12),
+			RetryGap: parseDurationWithDefault("DB_CONNECT_RETRY_INTERVAL", 5*time.Second),
 		},
 		Auth: AuthConfig{
 			JWTKey:       os.Getenv("JWT_KEY"),
@@ -169,4 +174,18 @@ func getEnvWithDefault(key string, fallback string) string {
 		return fallback
 	}
 	return value
+}
+
+func parseIntWithDefault(key string, fallback int) int {
+	value := strings.TrimSpace(os.Getenv(key))
+	if value == "" {
+		return fallback
+	}
+
+	parsed, err := strconv.Atoi(value)
+	if err != nil {
+		return fallback
+	}
+
+	return parsed
 }

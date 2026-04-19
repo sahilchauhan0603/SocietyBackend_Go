@@ -1,12 +1,14 @@
 package middleware
 
 import (
+	"bytes"
 	"context"
 	"crypto/rand"
 	"encoding/hex"
 	"encoding/json"
 	"log"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -19,6 +21,27 @@ type statusRecorder struct {
 	http.ResponseWriter
 	statusCode int
 	size       int
+}
+
+type captureResponseWriter struct {
+	headers    http.Header
+	statusCode int
+	body       bytes.Buffer
+}
+
+func (crw *captureResponseWriter) Header() http.Header {
+	return crw.headers
+}
+
+func (crw *captureResponseWriter) WriteHeader(statusCode int) {
+	crw.statusCode = statusCode
+}
+
+func (crw *captureResponseWriter) Write(body []byte) (int, error) {
+	if crw.statusCode == 0 {
+		crw.statusCode = http.StatusOK
+	}
+	return crw.body.Write(body)
 }
 
 func (sr *statusRecorder) WriteHeader(code int) {
@@ -48,26 +71,79 @@ func RequestIDMiddleware(next http.Handler) http.Handler {
 	})
 }
 
+func GetRequestID(ctx context.Context) string {
+	requestID, _ := ctx.Value(requestIDContextKey).(string)
+	return requestID
+}
+
 func LoggingMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		start := time.Now()
 		recorder := &statusRecorder{ResponseWriter: w}
 		next.ServeHTTP(recorder, r)
 
-		requestID, _ := r.Context().Value(requestIDContextKey).(string)
+		requestID := GetRequestID(r.Context())
 		if recorder.statusCode == 0 {
 			recorder.statusCode = http.StatusOK
 		}
 
-		log.Printf(
-			"request_id=%s method=%s path=%s status=%d duration_ms=%d bytes=%d",
-			requestID,
-			r.Method,
-			r.URL.Path,
-			recorder.statusCode,
-			time.Since(start).Milliseconds(),
-			recorder.size,
-		)
+		entry := map[string]any{
+			"timestamp":   time.Now().UTC().Format(time.RFC3339Nano),
+			"level":       "info",
+			"request_id":  requestID,
+			"method":      r.Method,
+			"path":        r.URL.Path,
+			"status":      recorder.statusCode,
+			"duration_ms": time.Since(start).Milliseconds(),
+			"bytes":       recorder.size,
+			"remote_addr": r.RemoteAddr,
+			"user_agent":  r.UserAgent(),
+		}
+
+		payload, err := json.Marshal(entry)
+		if err != nil {
+			log.Printf("{\"level\":\"error\",\"message\":\"failed to marshal log entry\",\"error\":%q}", err.Error())
+			return
+		}
+
+		log.Print(string(payload))
+	})
+}
+
+func TraceResponseMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		capture := &captureResponseWriter{headers: make(http.Header)}
+		next.ServeHTTP(capture, r)
+
+		statusCode := capture.statusCode
+		if statusCode == 0 {
+			statusCode = http.StatusOK
+		}
+
+		requestID := GetRequestID(r.Context())
+		body := capture.body.Bytes()
+
+		for key, values := range capture.headers {
+			for _, value := range values {
+				w.Header().Add(key, value)
+			}
+		}
+
+		if len(body) > 0 {
+			if isJSONResponse(capture.headers.Get("Content-Type"), body) {
+				updated, ok := appendTraceID(body, requestID)
+				if ok {
+					body = updated
+				}
+			}
+
+			w.Header().Set("Content-Length", strconv.Itoa(len(body)))
+		}
+
+		w.WriteHeader(statusCode)
+		if len(body) > 0 {
+			_, _ = w.Write(body)
+		}
 	})
 }
 
@@ -141,4 +217,52 @@ func generateRequestID() string {
 		return time.Now().Format("20060102150405.000000")
 	}
 	return hex.EncodeToString(bytes)
+}
+
+func isJSONResponse(contentType string, body []byte) bool {
+	if strings.Contains(strings.ToLower(contentType), "application/json") {
+		return true
+	}
+
+	trimmed := bytes.TrimSpace(body)
+	if len(trimmed) == 0 {
+		return false
+	}
+
+	return trimmed[0] == '{' || trimmed[0] == '['
+}
+
+func appendTraceID(body []byte, requestID string) ([]byte, bool) {
+	if requestID == "" {
+		return body, false
+	}
+
+	var payload any
+	if err := json.Unmarshal(body, &payload); err != nil {
+		return body, false
+	}
+
+	switch typed := payload.(type) {
+	case map[string]any:
+		if _, exists := typed["trace_id"]; !exists {
+			typed["trace_id"] = requestID
+		}
+		updated, err := json.Marshal(typed)
+		if err != nil {
+			return body, false
+		}
+		return updated, true
+	case []any:
+		wrapped := map[string]any{
+			"trace_id": requestID,
+			"data":     typed,
+		}
+		updated, err := json.Marshal(wrapped)
+		if err != nil {
+			return body, false
+		}
+		return updated, true
+	default:
+		return body, false
+	}
 }

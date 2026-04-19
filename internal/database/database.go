@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"log"
 	"strings"
+	"time"
 
 	_ "github.com/jackc/pgx/v5/stdlib"
 	config "github.com/sahilchauhan0603/society/internal/config"
@@ -28,9 +29,34 @@ func DatabaseConnector(cfg *config.Config) error {
 		cfg.Database.SSLMode,
 	)
 
+	if cfg.Database.MaxRetry < 1 {
+		cfg.Database.MaxRetry = 1
+	}
+
 	db, err := sql.Open("pgx", serverDSN)
 	if err != nil {
-		return fmt.Errorf("failed to connect to database server: %w", err)
+		return fmt.Errorf("failed to initialize database driver: %w", err)
+	}
+
+	var pingErr error
+	for attempt := 1; attempt <= cfg.Database.MaxRetry; attempt++ {
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		pingErr = db.PingContext(ctx)
+		cancel()
+
+		if pingErr == nil {
+			break
+		}
+
+		if attempt < cfg.Database.MaxRetry {
+			log.Printf("database ping failed (attempt %d/%d): %v", attempt, cfg.Database.MaxRetry, pingErr)
+			time.Sleep(cfg.Database.RetryGap)
+		}
+	}
+
+	if pingErr != nil {
+		db.Close()
+		return fmt.Errorf("failed to connect to database server after retries: %w", pingErr)
 	}
 	defer db.Close()
 

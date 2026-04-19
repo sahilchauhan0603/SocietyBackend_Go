@@ -2,7 +2,7 @@ package routes
 
 import (
 	"github.com/gorilla/mux"
-	contentctrl "github.com/sahilchauhan0603/society/internal/http/controllers/content"
+	contentctrl "github.com/sahilchauhan0603/society/internal/service/content"
 )
 
 func registerContentRoutes(api *mux.Router) {

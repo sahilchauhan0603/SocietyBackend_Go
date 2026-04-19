@@ -2,8 +2,8 @@ package routes
 
 import (
 	"github.com/gorilla/mux"
-	adminctrl "github.com/sahilchauhan0603/society/internal/http/controllers/admin"
 	"github.com/sahilchauhan0603/society/internal/http/middleware"
+	adminctrl "github.com/sahilchauhan0603/society/internal/service/admin"
 )
 
 func registerAdminRoutes(root *mux.Router, api *mux.Router) {

@@ -7,13 +7,12 @@ REST API backend for the Society Management platform, organized for production-s
 - cmd/api: application entrypoint
 - internal/config: centralized env loading and validation
 - internal/database: database bootstrap and migrations
-- internal/http/controllers: domain-based HTTP handlers
 - internal/http/middleware: request middleware
 - internal/http/routes: split route registration by domain
 - internal/helpers: reusable helper utilities (mail, OTP, reset)
 - internal/models: GORM models
-- internal/repository: data-access abstractions
-- internal/service: business/service abstractions
+- internal/repository: repository interfaces and implementations by domain
+- internal/service: business logic layer by domain
 - internal/utils: shared utility code
 
 ## Directory Structure
@@ -29,12 +28,6 @@ GoBACKEND/
     database/
       database.go
     http/
-      controllers/
-        admin/
-        auth/
-        content/
-        society/
-        student/
       middleware/
       routes/
         routes.go
@@ -46,7 +39,18 @@ GoBACKEND/
     helpers/
     models/
     repository/
+      admin_repository.go
+      society_repository.go
+      student_repository.go
+      content_repository.go
+      health_repository.go
     service/
+      admin/
+      auth/
+      content/
+      society/
+      student/
+      health_service.go
     utils/
   .env
   .env.example
@@ -75,6 +79,8 @@ Production-oriented server settings were added:
 - `SERVER_SHUTDOWN_TIMEOUT`
 - `CORS_ALLOWED_ORIGINS` (comma-separated)
 - `DB_SSLMODE`
+- `DB_CONNECT_MAX_RETRIES`
+- `DB_CONNECT_RETRY_INTERVAL`
 
 Minimum template:
 
@@ -94,6 +100,8 @@ DB_NAME=society_db
 DB_USER=postgres
 DB_PASS=your_db_password
 DB_SSLMODE=verify-full
+DB_CONNECT_MAX_RETRIES=12
+DB_CONNECT_RETRY_INTERVAL=5s
 
 # JWT
 JWT_KEY=replace_with_secure_secret
@@ -133,6 +141,40 @@ go build -o society-backend.exe ./cmd/api
 .\society-backend.exe
 ```
 
+## Docker (Production-like)
+
+Build and run API + PostgreSQL with healthchecks:
+
+```powershell
+cd "d:\PROJECTS - FULL_STACK\SocietyManagement\GoBACKEND"
+docker compose -p society-backend up --build -d
+```
+
+View status:
+
+```powershell
+docker compose -p society-backend ps
+docker compose -p society-backend logs -f api
+```
+
+Stop:
+
+```powershell
+docker compose -p society-backend down
+```
+
+Run again (after stop):
+
+```powershell
+docker compose -p society-backend up -d
+```
+
+Run again with rebuild (if code or Dockerfile changed):
+
+```powershell
+docker compose -p society-backend up --build -d
+```
+
 ## API Base URL
 
 - http://localhost:8000
@@ -155,4 +197,5 @@ Invoke-RestMethod "http://localhost:8000/healthz" -Method GET
 - OAuth and auth utility routes include `/microsoftLogin`, `/callback`, `/adminlogin`, `/forgotPassword`, and `/resetPassword`.
 - Startup auto-runs DB migration and seeds default admin if missing.
 - Graceful shutdown is enabled for SIGINT/SIGTERM.
-- Middleware stack includes panic recovery, request ID propagation, request logging, security headers, and CORS.
+- Middleware stack includes panic recovery, request ID propagation, structured JSON request logging, security headers, CORS, and trace ID injection in JSON responses.
+- Request trace ID is returned via `X-Request-ID` header and injected as `trace_id` in JSON response payloads.

@@ -2,7 +2,7 @@ package routes
 
 import (
 	"github.com/gorilla/mux"
-	studentctrl "github.com/sahilchauhan0603/society/internal/http/controllers/student"
+	studentctrl "github.com/sahilchauhan0603/society/internal/service/student"
 )
 
 func registerStudentRoutes(api *mux.Router) {

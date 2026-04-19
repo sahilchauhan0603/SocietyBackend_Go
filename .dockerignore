@@ -1,0 +1,12 @@
+.git
+.gitignore
+.vscode
+.idea
+*.log
+*.out
+.env
+coverage.out
+coverage.txt
+node_modules
+tmp
+temp

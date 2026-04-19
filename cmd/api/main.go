@@ -28,11 +28,12 @@ func main() {
 	}
 
 	router := mux.NewRouter()
-	router.Use(middleware.RecoveryMiddleware)
 	router.Use(middleware.RequestIDMiddleware)
+	router.Use(middleware.RecoveryMiddleware)
 	router.Use(middleware.LoggingMiddleware)
 	router.Use(middleware.SecurityHeadersMiddleware)
 	router.Use(middleware.CORSMiddleware(cfg.Server.AllowedOrigins))
+	router.Use(middleware.TraceResponseMiddleware)
 
 	routes.InitializeRoutes(router)
 

@@ -2,7 +2,7 @@ package routes
 
 import (
 	"github.com/gorilla/mux"
-	authctrl "github.com/sahilchauhan0603/society/internal/http/controllers/auth"
+	authctrl "github.com/sahilchauhan0603/society/internal/service/auth"
 )
 
 func registerAuthRoutes(root *mux.Router, api *mux.Router) {

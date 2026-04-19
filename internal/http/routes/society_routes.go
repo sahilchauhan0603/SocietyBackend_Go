@@ -2,8 +2,8 @@ package routes
 
 import (
 	"github.com/gorilla/mux"
-	societyctrl "github.com/sahilchauhan0603/society/internal/http/controllers/society"
-	studentctrl "github.com/sahilchauhan0603/society/internal/http/controllers/student"
+	societyctrl "github.com/sahilchauhan0603/society/internal/service/society"
+	studentctrl "github.com/sahilchauhan0603/society/internal/service/student"
 )
 
 func registerSocietyRoutes(api *mux.Router) {

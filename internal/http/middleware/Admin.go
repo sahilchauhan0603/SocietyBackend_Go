@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt"
-	adminctrl "github.com/sahilchauhan0603/society/internal/http/controllers/admin"
+	adminctrl "github.com/sahilchauhan0603/society/internal/service/admin"
 )
 
 func AdminMiddleware(next http.Handler) http.Handler {
